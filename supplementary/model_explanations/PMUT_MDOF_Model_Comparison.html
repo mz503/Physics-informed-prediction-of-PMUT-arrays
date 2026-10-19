@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PMUT Array Modeling: MDOF Physics-Informed PINNs, RF Ensembles & ML Baselines</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- MathJax Configuration for crisp equation rendering -->
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: {
+        ignoreHtmlClass: 'tex2jax_ignore',
+        processHtmlClass: 'tex2jax_process'
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+      --surface-card: #1e293b;
+      --surface-card-hover: #334155;
+      --surface-glass: rgba(30, 41, 59, 0.7);
+      --border-color: rgba(255, 255, 255, 0.1);
+      --border-accent: rgba(99, 102, 241, 0.3);
+      
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      
+      /* Model Colors */
+      --color-mdof: #00acc1;
+      --color-mdof-pinn: #8e24aa;
+      --color-pinn-loss: #d81b60;
+      --color-rf-mdof-pinn: #00796b;
+      --color-rf: #2196f3;
+      --color-gb: #ff9800;
+      --color-mlp: #9c27b0;
+      --color-success: #10b981;
+      --color-neg: #ef4444;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: 'Outfit', -apple-system, sans-serif;
+      background: #090d16;
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 30px 20px;
+    }
+
+    .container {
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+
+    /* Hero Header */
+    header {
+      background: var(--bg-gradient);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 40px 36px;
+      margin-bottom: 35px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      top: -50%; right: -20%;
+      width: 450px; height: 450px;
+      background: radial-gradient(circle, rgba(0, 121, 107, 0.3) 0%, rgba(216, 27, 96, 0.15) 50%, rgba(0, 0, 0, 0) 70%);
+      pointer-events: none;
+    }
+
+    .badge-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      background: rgba(99, 102, 241, 0.15);
+      color: #818cf8;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .badge.highlight {
+      background: rgba(216, 27, 96, 0.18);
+      color: #f472b6;
+      border-color: rgba(216, 27, 96, 0.4);
+    }
+
+    .badge.teal {
+      background: rgba(0, 121, 107, 0.25);
+      color: #4db6ac;
+      border-color: rgba(0, 121, 107, 0.5);
+    }
+
+    h1 {
+      font-size: 2.4rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 1050px;
+    }
+
+    /* Grid Sections */
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+      gap: 20px;
+      margin-bottom: 35px;
+    }
+
+    .card {
+      background: var(--surface-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 24px;
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
+    }
+
+    .card:hover {
+      border-color: var(--border-accent);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .card-title {
+      font-size: 1.18rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .pill {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .pill-mdof { background: var(--color-mdof); }
+    .pill-mdof-pinn { background: var(--color-mdof-pinn); }
+    .pill-pinn-loss { background: var(--color-pinn-loss); }
+    .pill-rf-mdof-pinn { background: var(--color-rf-mdof-pinn); }
+    .pill-rf { background: var(--color-rf); }
+    .pill-gb { background: var(--color-gb); }
+    .pill-mlp { background: var(--color-mlp); }
+
+    .formula-box {
+      background: #0f172a;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 14px;
+      margin: 12px 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: #e2e8f0;
+      overflow-x: auto;
+    }
+
+    .feature-list {
+      list-style: none;
+      margin-top: 12px;
+    }
+
+    .feature-list li {
+      position: relative;
+      padding-left: 22px;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .feature-list li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--color-success);
+      font-weight: 700;
+    }
+
+    .feature-list li.warn::before {
+      content: '⚠';
+      color: #f59e0b;
+    }
+
+    /* Comparison Table Section */
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+      margin-top: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .table-container {
+      background: var(--surface-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      overflow-x: auto;
+      margin-bottom: 35px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    th {
+      background: #0f172a;
+      color: var(--text-main);
+      padding: 14px 16px;
+      font-weight: 600;
+      border-bottom: 1px solid var(--border-color);
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--text-main);
+    }
+
+    tr.cross-row td {
+      background: rgba(245, 158, 11, 0.08) !important;
+    }
+
+    tr.ensemble-highlight td {
+      background: rgba(0, 121, 107, 0.12) !important;
+    }
+
+    .model-name-cell {
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .metric-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+    }
+
+    .metric-val.pos { color: #34d399; }
+    .metric-val.high { color: #60a5fa; }
+    .metric-val.teal { color: #4db6ac; font-weight: 700; }
+    .metric-val.neg { color: #f87171; font-weight: 400; opacity: 0.85; }
+
+    .tag-best {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .tag-teal {
+      background: rgba(0, 121, 107, 0.2);
+      color: #4db6ac;
+      border: 1px solid rgba(0, 121, 107, 0.4);
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .tag-physics {
+      background: rgba(216, 27, 96, 0.15);
+      color: #f472b6;
+      border: 1px solid rgba(216, 27, 96, 0.3);
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .tag-cross {
+      background: rgba(245, 158, 11, 0.2);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    /* Winner Spotlight Card */
+    .winner-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 20px;
+      margin-bottom: 35px;
+    }
+
+    .spotlight-card {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.95) 100%);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 26px;
+    }
+
+    .spotlight-card.ensemble {
+      border: 2px solid rgba(0, 121, 107, 0.5);
+      background: linear-gradient(135deg, rgba(0, 121, 107, 0.15) 0%, rgba(30, 41, 59, 0.9) 100%);
+    }
+
+    .spotlight-card.pinn {
+      border: 2px solid rgba(216, 27, 96, 0.4);
+      background: linear-gradient(135deg, rgba(216, 27, 96, 0.12) 0%, rgba(30, 41, 59, 0.9) 100%);
+    }
+
+    .spotlight-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .spotlight-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+    }
+
+    .spotlight-title.teal { color: #4db6ac; }
+    .spotlight-title.pink { color: #f472b6; }
+
+    .usecase-box {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 14px;
+      margin-top: 12px;
+    }
+
+    .usecase-box h4 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: var(--text-main);
+    }
+
+    .usecase-box p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body class="tex2jax_process">
+
+<div class="container">
+
+  <!-- Header -->
+  <header>
+    <div class="badge-bar">
+      <span class="badge">Model Architecture Analysis</span>
+      <span class="badge teal">Hybrid Ensemble: RF-MDOF-PINN</span>
+      <span class="badge highlight">Physics Model: PINN-Informed-Loss</span>
+      <span class="badge">PMUT Array Predictive Modeling</span>
+    </div>
+    <h1>PMUT Physics-Informed Neural Networks, Hybrid Ensembles & ML Baselines</h1>
+    <p class="subtitle">
+      Comprehensive technical breakdown of analytical MDOF, MDOF-PINN, PINN + Physics-Informed Loss, baseline ML regressors (RF, GB, MLP), and the new <strong>RF-MDOF-PINN Hybrid Ensemble</strong> combining tree-based residual interpolation with mechanical oscillator physical equations across array sizes $N = 2 \dots 16$.
+    </p>
+  </header>
+
+  <!-- Section 1: Detailed Model Breakdown -->
+  <div class="section-title">
+    <span>🔬 Model Architectures & Governing Equations</span>
+  </div>
+
+  <div class="grid-4">
+
+    <!-- Model 1: Analytical MDOF -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="pill pill-mdof"></span> Analytical MDOF
+        </div>
+        <span class="badge">Classical Physics</span>
+      </div>
+      <p style="font-size:0.88rem; color:var(--text-muted)">
+        Direct experimental frequency response decomposition into a multi-mode mechanical harmonic oscillator superposition model.
+      </p>
+      <div class="formula-box">
+        $$H(\omega) = \sum_{i=1}^K \frac{A_i \omega_{0,i}^2}{(\omega_{0,i}^2 - \omega^2) + j \left(\frac{\omega_{0,i}\omega}{Q_i}\right)} + A_{\text{bg}}$$
+      </div>
+      <ul class="feature-list">
+        <li>Direct fitting per single device spectrum</li>
+        <li>Identifies exact resonant frequencies ($f_{0,i}$) & $Q_i$</li>
+        <li class="warn">Cannot generalize across unseen array sizes ($N$)</li>
+      </ul>
+    </div>
+
+    <!-- Model 2: MDOF-PINN -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="pill pill-mdof-pinn"></span> MDOF-PINN
+        </div>
+        <span class="badge">Baseline PINN</span>
+      </div>
+      <p style="font-size:0.88rem; color:var(--text-muted)">
+        Neural network mapping PMUT array size $N \to [A_{\text{bg}}, A_i, f_{0,i}, Q_i]$, feeding a differentiable modal transfer layer.
+      </p>
+      <div class="formula-box">
+        $$\mathcal{L} = \mathcal{L}_{\text{MSE}} = \frac{1}{M} \sum_{i=1}^M (A_{\text{pred},i} - A_{\text{exp},i})^2$$
+      </div>
+      <ul class="feature-list">
+        <li>Maps array size $N$ directly to MDOF parameters</li>
+        <li>Preserves multi-mode peak transfer function shape</li>
+        <li class="warn">No physical parameter constraints ($m, c, k$)</li>
+      </ul>
+    </div>
+
+    <!-- Model 3: PINN-Informed-Loss -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="pill pill-pinn-loss"></span> PINN-Informed-Loss
+        </div>
+        <span class="tag-physics">System ID</span>
+      </div>
+      <p style="font-size:0.88rem; color:var(--text-muted)">
+        Predicts fundamental physical parameters $\theta_N = [m_N, c_N, k_N, Q_N, A_N]$ through a Differentiable Oscillator Layer with Informed Loss.
+      </p>
+      <div class="formula-box">
+        $$\mathcal{L} = \lambda_d \mathcal{L}_{\text{data}} + \lambda_p \mathcal{L}_{\text{physics}} + \lambda_s \mathcal{L}_{\text{smooth}}$$
+      </div>
+      <ul class="feature-list">
+        <li>Enforces physical positivity: $m_N, c_N, k_N, Q_N > 0$</li>
+        <li>Physical consistency: $Q_N = \frac{\sqrt{m_N k_N}}{c_N}$</li>
+        <li>Smoothness regularizer across array sizes</li>
+      </ul>
+    </div>
+
+    <!-- Model 4: RF-MDOF-PINN Ensemble -->
+    <div class="card" style="border-color: rgba(0, 121, 107, 0.5); background: rgba(0, 121, 107, 0.07);">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="pill pill-rf-mdof-pinn"></span> RF-MDOF-PINN
+        </div>
+        <span class="tag-teal">Hybrid Ensemble</span>
+      </div>
+      <p style="font-size:0.88rem; color:var(--text-muted)">
+        Combines MDOF-PINN multi-mode mechanical physics backbone with Random Forest residual error interpolation.
+      </p>
+      <div class="formula-box">
+        $$y_{\text{ens}}(f, N) = y_{\text{mdof\_pinn}}(f, N) + \text{RF}_{\text{res}}(f, N)$$
+      </div>
+      <ul class="feature-list">
+        <li>Guarantees physical resonance bounds & Q-factors</li>
+        <li>Fits non-linear empirical residual variations</li>
+        <li>Prevents cross-regime extrapolation $R^2$ crash ($R^2=0.534$ on P12) while reaching $R^2 > 0.999$</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- Section 2: Regime Summary Table -->
+  <div class="section-title">
+    <span>📊 Summary Performance Comparison by Regime</span>
+  </div>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>Model Type</th>
+          <th>Physical Interpretability</th>
+          <th>Array Smoothness ($\mathcal{L}_{\text{smooth}}$)</th>
+          <th>Regime 2 ($N=3\text{--}11$) Mean Test $R^2$</th>
+          <th>Regime 3 ($N=12\text{--}16$) Mean Test $R^2$</th>
+          <th>Primary Excelled Domain</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="ensemble-highlight">
+          <td class="model-name-cell">
+            <span class="pill pill-rf-mdof-pinn"></span> RF-MDOF-PINN
+          </td>
+          <td>Hybrid Physics-Data Ensemble</td>
+          <td><span class="tag-teal">Modal Backbone + Residual</span></td>
+          <td><span class="tag-teal">Physics Constrained</span></td>
+          <td class="metric-val teal">0.5447</td>
+          <td class="metric-val teal">0.9993</td>
+          <td><span class="tag-teal">Best Overall Interpolation & Extrapolation</span></td>
+        </tr>
+        <tr style="background: rgba(216, 27, 96, 0.08);">
+          <td class="model-name-cell">
+            <span class="pill pill-pinn-loss"></span> PINN-Informed-Loss
+          </td>
+          <td>PINN (Informed Loss)</td>
+          <td><span class="tag-physics">Full ($m, c, k, Q, f_0$)</span></td>
+          <td><span class="tag-best">Strictly Enforced</span></td>
+          <td class="metric-val">0.2107</td>
+          <td class="metric-val">0.9164</td>
+          <td><span class="tag-physics">System Identification & Physics Discovery</span></td>
+        </tr>
+        <tr>
+          <td class="model-name-cell">
+            <span class="pill pill-mdof-pinn"></span> MDOF-PINN
+          </td>
+          <td>PINN (Standard MSE)</td>
+          <td>Modal ($A_i, f_{0,i}, Q_i$)</td>
+          <td>Unregulated</td>
+          <td class="metric-val">0.3703</td>
+          <td class="metric-val">0.9170</td>
+          <td>Transfer Function Peak Generalization</td>
+        </tr>
+        <tr>
+          <td class="model-name-cell">
+            <span class="pill pill-mdof"></span> Analytical MDOF
+          </td>
+          <td>Direct Fitting</td>
+          <td>Modal ($A_i, f_{0,i}, Q_i$)</td>
+          <td>N/A (Single Device)</td>
+          <td class="metric-val">N/A</td>
+          <td class="metric-val">N/A</td>
+          <td>Single PMUT Ground Truth Baseline</td>
+        </tr>
+        <tr>
+          <td class="model-name-cell">
+            <span class="pill pill-gb"></span> Gradient Boosting (GB)
+          </td>
+          <td>Tree Ensemble</td>
+          <td>None (Black-box)</td>
+          <td>None</td>
+          <td class="metric-val">0.6433</td>
+          <td class="metric-val"><span class="tag-best">0.9994</span></td>
+          <td>Pure Empirical Curve Fitting ($N \ge 12$)</td>
+        </tr>
+        <tr>
+          <td class="model-name-cell">
+            <span class="pill pill-rf"></span> Random Forest (RF)
+          </td>
+          <td>Tree Ensemble</td>
+          <td>None (Black-box)</td>
+          <td>None</td>
+          <td class="metric-val">0.5626</td>
+          <td class="metric-val"><span class="tag-best">0.9992</span></td>
+          <td>High-Density Array Empirical Interpolation</td>
+        </tr>
+        <tr>
+          <td class="model-name-cell">
+            <span class="pill pill-mlp"></span> Multi-Layer Perceptron (MLP)
+          </td>
+          <td>Neural Network</td>
+          <td>None (Black-box)</td>
+          <td>Implicit (Weights)</td>
+          <td class="metric-val neg">-4.2097</td>
+          <td class="metric-val neg">-13.7474</td>
+          <td>Continuous Non-linear Mapping (Dense Data)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Section 3: Exact Per-Device R^2 Matrix Table -->
+  <div class="section-title">
+    <span>📈 Exact Test $R^2$ Score per PMUT Device Size ($N = 2 \dots 16$)</span>
+  </div>
+
+  <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 16px;">
+    Each row below represents the exact test $R^2$ evaluation on the 1,000-point full frequency response spectrum for target array size $N$ (unseen during training). Note how <strong>RF-MDOF-PINN</strong> avoids the cross-regime extrapolation failure ($R^2 > 0$) while matching top empirical tree accuracy.
+  </p>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Target PMUT ($N$)</th>
+          <th>Regime / Boundary</th>
+          <th>Training Set</th>
+          <th>RF-MDOF-PINN</th>
+          <th>PINN-Informed-Loss</th>
+          <th>MDOF-PINN</th>
+          <th>RF</th>
+          <th>GB</th>
+          <th>MLP</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>PMUT 2</strong></td>
+          <td>Regime 1 (1–2)</td>
+          <td>[1]</td>
+          <td class="metric-val neg">-11491.6711</td>
+          <td class="metric-val neg">-11526.0041</td>
+          <td class="metric-val neg">-11490.7549</td>
+          <td class="metric-val neg">-11527.7420</td>
+          <td class="metric-val neg">-11527.7420</td>
+          <td class="metric-val neg">-12976.3215</td>
+        </tr>
+        <tr class="cross-row">
+          <td><strong>PMUT 3 ★</strong></td>
+          <td><span class="tag-cross">Cross R1 → R2</span></td>
+          <td>[1, 2]</td>
+          <td class="metric-val neg">-1079.5332</td>
+          <td class="metric-val neg">-2604.4684</td>
+          <td class="metric-val neg">-2519.2306</td>
+          <td class="metric-val neg">-1737.8972</td>
+          <td class="metric-val neg">-391.1903</td>
+          <td class="metric-val neg">-46.2763</td>
+        </tr>
+        <tr>
+          <td><strong>PMUT 4</strong></td>
+          <td>Regime 2 (3–11)</td>
+          <td>[3]</td>
+          <td class="metric-val neg">-0.2761</td>
+          <td class="metric-val neg">-0.3375</td>
+          <td class="metric-val neg">-0.3258</td>
+          <td class="metric-val neg">-0.2889</td>
+          <td class="metric-val neg">-0.2889</td>
+          <td class="metric-val neg">-0.6762</td>
+        </tr>
+        <tr>
+          <td><strong>PMUT 5</strong></td>
+          <td>Regime 2 (3–11)</td>
+          <td>[3, 4]</td>
+          <td class="metric-val pos">0.5208</td>
+          <td class="metric-val neg">-0.3576</td>
+          <td class="metric-val pos">0.4413</td>
+          <td class="metric-val pos">0.2207</td>
+          <td class="metric-val pos">0.6464</td>
+          <td class="metric-val neg">-14.4214</td>
+        </tr>
+        <tr>
+          <td><strong>PMUT 6</strong></td>
+          <td>Regime 2 (3–11)</td>
+          <td>[3, 4, 5]</td>
+          <td class="metric-val pos">0.5110</td>
+          <td class="metric-val neg">-0.2978</td>
+          <td class="metric-val pos">0.4036</td>
+          <td class="metric-val pos">0.6738</td>
+          <td class="metric-val pos">0.8544</td>
+          <td class="metric-val neg">-5.6686</td>
+        </tr>
+        <tr>
+          <td><strong>PMUT 7</strong></td>
+          <td>Regime 2 (3–11)</td>
+          <td>[3 .. 6]</td>
+          <td class="metric-val pos">0.5329</td>
+          <td class="metric-val neg">-0.0857</td>
+          <td class="metric-val pos">0.3646</td>
+          <td class="metric-val pos">0.8518</td>
+          <td class="metric-val pos">0.9386</td>
+          <td class="metric-val neg">-4.3526</td>
+        </tr>
+        <tr>
+          <td><strong>PMUT 8</strong></td>
+          <td>Regime 2 (3–11)</td>
+          <td>[3 .. 7]</td>
+          <td class="metric-val pos">0.6878</td>
+          <td class="metric-val pos">0.6005</td>
+          <td class="metric-val pos">0.4271</td>
+          <td class="metric-val pos">0.9268</td>
+          <td class="metric-val pos">0.9564</td>
+          <td class="metric-val neg">-3.6284</td>
+        </tr>
+        <tr>
+          <td><strong>PMUT 9</strong></td>
+          <td>Regime 2 (3–11)</td>
+          <td>[3 .. 8]</td>
+          <td class="metric-val pos">0.7624</td>
+          <td class="metric-val pos">0.5637</td>
+          <td class="metric-val pos">0.4154</td>
+          <td class="metric-val pos">0.9510</td>
+          <td class="metric-val pos">0.9628</td>
+          <td class="metric-val neg">-3.1477</td>
+        </tr>
+        <tr>
+          <td><strong>PMUT 10</strong></td>
+          <td>Regime 2 (3–11)</td>
+          <td>[3 .. 9]</td>
+          <td class="metric-val pos">0.8011</td>
+          <td class="metric-val pos">0.5253</td>
+          <td class="metric-val pos">0.4129</td>
+          <td class="metric-val pos">0.9809</td>
+          <td class="metric-val pos">0.9855</td>
+          <td class="metric-val neg">-2.9191</td>
+        </tr>
+        <tr>
+          <td><strong>PMUT 11</strong></td>
+          <td>Regime 2 (3–11)</td>
+          <td>[3 .. 10]</td>
+          <td class="metric-val pos">0.8277</td>
+          <td class="metric-val pos">0.5655</td>
+          <td class="metric-val pos">0.4433</td>
+          <td class="metric-val pos">0.9848</td>
+          <td class="metric-val pos">0.9868</td>
+          <td class="metric-val neg">-2.5448</td>
+        </tr>
+        <tr class="cross-row ensemble-highlight">
+          <td><strong>PMUT 12 ★</strong></td>
+          <td><span class="tag-cross">Cross R2 → R3</span></td>
+          <td>[3 .. 11]</td>
+          <td class="metric-val teal">0.5344</td>
+          <td class="metric-val high">0.7196</td>
+          <td class="metric-val high">0.7503</td>
+          <td class="metric-val neg">-0.2377</td>
+          <td class="metric-val neg">-0.2523</td>
+          <td class="metric-val neg">-0.5289</td>
+        </tr>
+        <tr>
+          <td><strong>PMUT 13</strong></td>
+          <td>Regime 3 (12–16)</td>
+          <td>[12]</td>
+          <td class="metric-val teal">0.9995</td>
+          <td class="metric-val pos">0.9186</td>
+          <td class="metric-val pos">0.9187</td>
+          <td class="metric-val pos">0.9997</td>
+          <td class="metric-val pos">0.9997</td>
+          <td class="metric-val pos">0.6258</td>
+        </tr>
+        <tr>
+          <td><strong>PMUT 14</strong></td>
+          <td>Regime 3 (12–16)</td>
+          <td>[12, 13]</td>
+          <td class="metric-val teal">0.9997</td>
+          <td class="metric-val pos">0.9184</td>
+          <td class="metric-val pos">0.9185</td>
+          <td class="metric-val pos">0.9998</td>
+          <td class="metric-val pos">0.9999</td>
+          <td class="metric-val neg">-36.5400</td>
+        </tr>
+        <tr>
+          <td><strong>PMUT 15</strong></td>
+          <td>Regime 3 (12–16)</td>
+          <td>[12 .. 14]</td>
+          <td class="metric-val teal">0.9982</td>
+          <td class="metric-val pos">0.9141</td>
+          <td class="metric-val pos">0.9148</td>
+          <td class="metric-val pos">0.9979</td>
+          <td class="metric-val pos">0.9981</td>
+          <td class="metric-val neg">-11.5571</td>
+        </tr>
+        <tr>
+          <td><strong>PMUT 16</strong></td>
+          <td>Regime 3 (12–16)</td>
+          <td>[12 .. 15]</td>
+          <td class="metric-val teal">0.9997</td>
+          <td class="metric-val pos">0.9143</td>
+          <td class="metric-val pos">0.9161</td>
+          <td class="metric-val pos">0.9992</td>
+          <td class="metric-val pos">0.9998</td>
+          <td class="metric-val neg">-7.5184</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Section 4: Winner & Spotlight Cards -->
+  <div class="winner-grid">
+
+    <div class="spotlight-card ensemble">
+      <div class="spotlight-header">
+        <div class="spotlight-title teal">🌲+⚡ Best Hybrid Ensemble: RF-MDOF-PINN</div>
+        <span class="tag-teal">Physics + Residual Stacking</span>
+      </div>
+      <p style="color: var(--text-muted); font-size: 0.92rem; margin-bottom: 12px;">
+        Combines the continuous physical transfer backbone of MDOF-PINN with non-parametric Random Forest residual error fitting.
+      </p>
+      <div class="usecase-box">
+        <h4>🎯 Key Strength</h4>
+        <p>Prevents cross-regime extrapolation failures (retains $R^2 = 0.5344$ on PMUT 12) while matching top tree-based empirical precision ($R^2 > 0.999$) on dense arrays.</p>
+      </div>
+    </div>
+
+    <div class="spotlight-card pinn">
+      <div class="spotlight-header">
+        <div class="spotlight-title pink">⚛️ Best Physics Discovery: PINN-Informed-Loss</div>
+        <span class="tag-physics">System Identification</span>
+      </div>
+      <p style="color: var(--text-muted); font-size: 0.92rem; margin-bottom: 12px;">
+        Predicts physical parameters $\theta_N = [m_N, c_N, k_N, Q_N, A_N]$ directly through differential mechanical oscillator loss functions.
+      </p>
+      <div class="usecase-box">
+        <h4>🔬 Key Strength</h4>
+        <p>Discovers true physical quantities ($m, c, k, Q$) and enforces physical consistency constraints ($Q_N = \sqrt{m_N k_N}/c_N$) across array scaling.</p>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>

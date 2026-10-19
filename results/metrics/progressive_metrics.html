@@ -1,0 +1,1200 @@
+<html><head><meta charset='utf-8'><title>Progressive Training — Vector · Full Spectrum — Metrics</title><style>
+body{font-family:system-ui,sans-serif;max-width:1200px;margin:auto;padding:20px}
+h1,h2{color:#37474F}
+table{border-collapse:collapse;width:100%;font-size:12.5px;margin-top:12px}
+th,td{border:1px solid #ddd;padding:5px 10px;text-align:right}
+th{background:#37474F;color:white;cursor:pointer;white-space:nowrap;user-select:none}
+th:first-child,td:first-child,
+th:nth-child(2),td:nth-child(2),
+th:nth-child(3),td:nth-child(3),
+th:nth-child(4),td:nth-child(4),
+th:nth-child(5),td:nth-child(5){text-align:left}
+tr:nth-child(even){background:#F5F5F5}
+.note{font-size:12px;color:#666;margin:6px 0 16px}
+.cross td{background:#FFF9C4 !important}
+</style><script>
+function sortTable(n){
+  var t=document.querySelector("table"),rows,ok=true,i,x,y,dir="asc",sw;
+  while(ok){ok=false;rows=t.rows;
+    for(i=1;i<rows.length-1;i++){sw=false;
+      x=rows[i].cells[n];y=rows[i+1].cells[n];
+      var a=isNaN(x.innerHTML)?x.innerHTML.toLowerCase():parseFloat(x.innerHTML);
+      var b=isNaN(y.innerHTML)?y.innerHTML.toLowerCase():parseFloat(y.innerHTML);
+      if((dir=="asc"&&a>b)||(dir=="desc"&&a<b)){
+        rows[i].parentNode.insertBefore(rows[i+1],rows[i]);sw=true;ok=true;}}
+    if(!sw){if(dir=="asc"){dir="desc";ok=true;}}}}
+window.onload=function(){
+  document.querySelectorAll("th").forEach((th,i)=>{th.onclick=()=>sortTable(i);});};
+</script></head><body><h1>Progressive Training — Vector · Full Spectrum</h1><p class='note'>Cumulative training: each PMUT N is predicted by a model trained on all preceding PMUTs [1..N-1]. Approach: Vector (multi-output). Scope: Full Spectrum (1000 pts). R² negatives clipped to 0 in chart; red ✕ marks them.</p><div style="height:780px; width:100%;">                        <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-4.1.1.min.js" integrity="sha256-O24V1F27f8pb0glCkelh3cVHLNiHAJ5gCaVtq2aNch8=" crossorigin="anonymous"></script>                <div id="2d1fb399-a8a7-4880-a030-7a7e4b37ed0c" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("2d1fb399-a8a7-4880-a030-7a7e4b37ed0c")) {                    Plotly.newPlot(                        "2d1fb399-a8a7-4880-a030-7a7e4b37ed0c",                        [{"legendgroup":"RF","marker":{"color":"#2196F3"},"name":"RF","x":["P2","P3","P4","P5","P6","P7","P8","P9","P10","P11","P12","P13","P14","P15","P16"],"y":[0.462314,0.223393,0.053012,0.012914,0.004231,0.001942,0.001434,0.00128,0.000795,0.000655,0.005818,0.001781,0.000448,0.000222,0.00011],"type":"bar","xaxis":"x","yaxis":"y"},{"legendgroup":"RF","marker":{"color":"#2196F3"},"name":"RF","showlegend":false,"x":["P2","P3","P4","P5","P6","P7","P8","P9","P10","P11","P12","P13","P14","P15","P16"],"y":[0.462343,0.223437,0.053033,0.012938,0.004253,0.001956,0.001438,0.00132,0.000803,0.000663,0.00589,0.001799,0.000453,0.000284,0.000153],"type":"bar","xaxis":"x2","yaxis":"y2"},{"legendgroup":"RF","marker":{"color":"#2196F3"},"name":"RF","showlegend":false,"x":["P2","P3","P4","P5","P6","P7","P8","P9","P10","P11","P12","P13","P14","P15","P16"],"y":[0.0,0.0,0.0,0.0,0.3669,0.8671,0.929,0.9373,0.9771,0.9847,0.0,0.8849,0.9928,0.9972,0.9992],"type":"bar","xaxis":"x3","yaxis":"y3"},{"hoverinfo":"text+x","hovertext":["RF R\u00b2=-11527.742","RF R\u00b2=-1737.897","RF R\u00b2=-97.699","RF R\u00b2=-4.886","RF R\u00b2=-0.239"],"marker":{"color":"red","size":11,"symbol":"x"},"mode":"markers","showlegend":false,"x":["P2","P3","P4","P5","P12"],"y":[0.01,0.01,0.01,0.01,0.01],"type":"scatter","xaxis":"x3","yaxis":"y3"},{"legendgroup":"RF","marker":{"color":"#2196F3"},"name":"RF","showlegend":false,"x":["Regime 1 (1\u20132)","Regime 2 (3\u201311)","Regime 3 (12\u201316)"],"y":[0.462314,0.03329511111111111,0.0016758000000000003],"type":"bar","xaxis":"x4","yaxis":"y4"},{"legendgroup":"GB","marker":{"color":"#FF9800"},"name":"GB","x":["P2","P3","P4","P5","P6","P7","P8","P9","P10","P11","P12","P13","P14","P15","P16"],"y":[0.462314,0.106056,0.015282,0.010144,0.007902,0.006522,0.005832,0.005251,0.004674,0.00426,0.009289,0.004302,0.003556,0.003249,0.002947],"type":"bar","xaxis":"x","yaxis":"y"},{"legendgroup":"GB","marker":{"color":"#FF9800"},"name":"GB","showlegend":false,"x":["P2","P3","P4","P5","P6","P7","P8","P9","P10","P11","P12","P13","P14","P15","P16"],"y":[0.462343,0.106112,0.015296,0.010155,0.007908,0.006526,0.005835,0.005275,0.004681,0.004263,0.009335,0.004305,0.003559,0.003259,0.002956],"type":"bar","xaxis":"x2","yaxis":"y2"},{"legendgroup":"GB","marker":{"color":"#FF9800"},"name":"GB","showlegend":false,"x":["P2","P3","P4","P5","P6","P7","P8","P9","P10","P11","P12","P13","P14","P15","P16"],"y":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.223,0.3664,0.0,0.3407,0.5529,0.6283,0.6939],"type":"bar","xaxis":"x3","yaxis":"y3"},{"hoverinfo":"text+x","hovertext":["GB R\u00b2=-11527.742","GB R\u00b2=-391.190","GB R\u00b2=-7.210","GB R\u00b2=-2.626","GB R\u00b2=-1.189","GB R\u00b2=-0.478","GB R\u00b2=-0.169","GB R\u00b2=-0.001","GB R\u00b2=-2.113"],"marker":{"color":"red","size":11,"symbol":"x"},"mode":"markers","showlegend":false,"x":["P2","P3","P4","P5","P6","P7","P8","P9","P12"],"y":[0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01],"type":"scatter","xaxis":"x3","yaxis":"y3"},{"legendgroup":"GB","marker":{"color":"#FF9800"},"name":"GB","showlegend":false,"x":["Regime 1 (1\u20132)","Regime 2 (3\u201311)","Regime 3 (12\u201316)"],"y":[0.462314,0.018435888888888887,0.0046686],"type":"bar","xaxis":"x4","yaxis":"y4"},{"legendgroup":"MLP","marker":{"color":"#9C27B0"},"name":"MLP","x":["P2","P3","P4","P5","P6","P7","P8","P9","P10","P11","P12","P13","P14","P15","P16"],"y":[0.490164,0.036252,0.006146,0.020608,0.007533,0.002891,0.002833,0.003893,0.004332,0.004527,0.00262,0.002121,0.003869,0.003922,0.003617],"type":"bar","xaxis":"x","yaxis":"y"},{"legendgroup":"MLP","marker":{"color":"#9C27B0"},"name":"MLP","showlegend":false,"x":["P2","P3","P4","P5","P6","P7","P8","P9","P10","P11","P12","P13","P14","P15","P16"],"y":[0.49053,0.036842,0.007321,0.021083,0.008201,0.003567,0.003662,0.00483,0.005043,0.005249,0.003195,0.002699,0.004459,0.004485,0.004109],"type":"bar","xaxis":"x2","yaxis":"y2"},{"legendgroup":"MLP","marker":{"color":"#9C27B0"},"name":"MLP","showlegend":false,"x":["P2","P3","P4","P5","P6","P7","P8","P9","P10","P11","P12","P13","P14","P15","P16"],"y":[0.0,0.0,0.0,0.0,0.0,0.5584,0.5398,0.1608,0.0983,0.0394,0.6353,0.7408,0.2982,0.296,0.4081],"type":"bar","xaxis":"x3","yaxis":"y3"},{"hoverinfo":"text+x","hovertext":["MLP R\u00b2=-12976.322","MLP R\u00b2=-46.276","MLP R\u00b2=-0.881","MLP R\u00b2=-14.630","MLP R\u00b2=-1.354"],"marker":{"color":"red","size":11,"symbol":"x"},"mode":"markers","showlegend":false,"x":["P2","P3","P4","P5","P6"],"y":[0.01,0.01,0.01,0.01,0.01],"type":"scatter","xaxis":"x3","yaxis":"y3"},{"legendgroup":"MLP","marker":{"color":"#9C27B0"},"name":"MLP","showlegend":false,"x":["Regime 1 (1\u20132)","Regime 2 (3\u201311)","Regime 3 (12\u201316)"],"y":[0.490164,0.009890555555555555,0.0032298],"type":"bar","xaxis":"x4","yaxis":"y4"},{"legendgroup":"PINN","marker":{"color":"#E91E63"},"name":"PINN","x":["P2","P3","P4","P5","P6","P7","P8","P9","P10","P11","P12","P13","P14","P15","P16"],"y":[0.406534,0.364272,0.332711,0.274227,0.224478,0.192463,0.16538,0.143703,0.129275,0.10591,0.082072,0.091326,0.089908,0.082732,0.069047],"type":"bar","xaxis":"x","yaxis":"y"},{"legendgroup":"PINN","marker":{"color":"#E91E63"},"name":"PINN","showlegend":false,"x":["P2","P3","P4","P5","P6","P7","P8","P9","P10","P11","P12","P13","P14","P15","P16"],"y":[0.406555,0.364344,0.332759,0.27429,0.224583,0.192574,0.165502,0.143881,0.129508,0.106142,0.082278,0.091707,0.090215,0.083013,0.069504],"type":"bar","xaxis":"x2","yaxis":"y2"},{"legendgroup":"PINN","marker":{"color":"#E91E63"},"name":"PINN","showlegend":false,"x":["P2","P3","P4","P5","P6","P7","P8","P9","P10","P11","P12","P13","P14","P15","P16"],"y":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"type":"bar","xaxis":"x3","yaxis":"y3"},{"hoverinfo":"text+x","hovertext":["PINN R\u00b2=-8913.379","PINN R\u00b2=-4622.688","PINN R\u00b2=-3884.738","PINN R\u00b2=-2644.537","PINN R\u00b2=-1764.521","PINN R\u00b2=-1286.137","PINN R\u00b2=-939.193","PINN R\u00b2=-743.845","PINN R\u00b2=-593.699","PINN R\u00b2=-391.770","PINN R\u00b2=-240.864","PINN R\u00b2=-298.217","PINN R\u00b2=-286.309","PINN R\u00b2=-240.204","PINN R\u00b2=-168.310"],"marker":{"color":"red","size":11,"symbol":"x"},"mode":"markers","showlegend":false,"x":["P2","P3","P4","P5","P6","P7","P8","P9","P10","P11","P12","P13","P14","P15","P16"],"y":[0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01],"type":"scatter","xaxis":"x3","yaxis":"y3"},{"legendgroup":"PINN","marker":{"color":"#E91E63"},"name":"PINN","showlegend":false,"x":["Regime 1 (1\u20132)","Regime 2 (3\u201311)","Regime 3 (12\u201316)"],"y":[0.406534,0.21471322222222222,0.08301700000000001],"type":"bar","xaxis":"x4","yaxis":"y4"},{"legendgroup":"MDOF-PINN","marker":{"color":"#8E24AA"},"name":"MDOF-PINN","x":["P2","P3","P4","P5","P6","P7","P8","P9","P10","P11","P12","P13","P14","P15","P16"],"y":[0.461564,0.268404,0.155577,0.098088,0.063616,0.040426,0.024344,0.011991,0.004504,0.001706,0.002197,0.006855,0.011485,0.015585,0.019316],"type":"bar","xaxis":"x","yaxis":"y"},{"legendgroup":"MDOF-PINN","marker":{"color":"#8E24AA"},"name":"MDOF-PINN","showlegend":false,"x":["P2","P3","P4","P5","P6","P7","P8","P9","P10","P11","P12","P13","P14","P15","P16"],"y":[0.46159,0.268991,0.156576,0.099417,0.064695,0.041381,0.025022,0.012854,0.005548,0.002172,0.003295,0.007383,0.011821,0.016007,0.019829],"type":"bar","xaxis":"x2","yaxis":"y2"},{"legendgroup":"MDOF-PINN","marker":{"color":"#8E24AA"},"name":"MDOF-PINN","showlegend":false,"x":["P2","P3","P4","P5","P6","P7","P8","P9","P10","P11","P12","P13","P14","P15","P16"],"y":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.8355,0.612,0.0,0.0,0.0,0.0],"type":"bar","xaxis":"x3","yaxis":"y3"},{"hoverinfo":"text+x","hovertext":["MDOF-PINN R\u00b2=-11490.237","MDOF-PINN R\u00b2=-2519.231","MDOF-PINN R\u00b2=-859.333","MDOF-PINN R\u00b2=-346.551","MDOF-PINN R\u00b2=-145.509","MDOF-PINN R\u00b2=-58.433","MDOF-PINN R\u00b2=-20.491","MDOF-PINN R\u00b2=-4.945","MDOF-PINN R\u00b2=-0.091","MDOF-PINN R\u00b2=-0.939","MDOF-PINN R\u00b2=-3.933","MDOF-PINN R\u00b2=-7.968","MDOF-PINN R\u00b2=-12.780"],"marker":{"color":"red","size":11,"symbol":"x"},"mode":"markers","showlegend":false,"x":["P2","P3","P4","P5","P6","P7","P8","P9","P10","P13","P14","P15","P16"],"y":[0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01],"type":"scatter","xaxis":"x3","yaxis":"y3"},{"legendgroup":"MDOF-PINN","marker":{"color":"#8E24AA"},"name":"MDOF-PINN","showlegend":false,"x":["Regime 1 (1\u20132)","Regime 2 (3\u201311)","Regime 3 (12\u201316)"],"y":[0.461564,0.0742951111111111,0.0110876],"type":"bar","xaxis":"x4","yaxis":"y4"},{"legendgroup":"PINN-Informed-Loss","marker":{"color":"#D81B60"},"name":"PINN-Informed-Loss","x":["P2","P3","P4","P5","P6","P7","P8","P9","P10","P11","P12","P13","P14","P15","P16"],"y":[0.462282,0.273392,0.164547,0.107672,0.072696,0.048909,0.031939,0.019598,0.009824,0.002866,0.002674,0.006884,0.011503,0.015605,0.019328],"type":"bar","xaxis":"x","yaxis":"y"},{"legendgroup":"PINN-Informed-Loss","marker":{"color":"#D81B60"},"name":"PINN-Informed-Loss","showlegend":false,"x":["P2","P3","P4","P5","P6","P7","P8","P9","P10","P11","P12","P13","P14","P15","P16"],"y":[0.462309,0.273529,0.164614,0.107776,0.072854,0.049144,0.032294,0.020023,0.010771,0.005514,0.005086,0.007384,0.01184,0.016029,0.019842],"type":"bar","xaxis":"x2","yaxis":"y2"},{"legendgroup":"PINN-Informed-Loss","marker":{"color":"#D81B60"},"name":"PINN-Informed-Loss","showlegend":false,"x":["P2","P3","P4","P5","P6","P7","P8","P9","P10","P11","P12","P13","P14","P15","P16"],"y":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0759,0.0,0.0,0.0,0.0],"type":"bar","xaxis":"x3","yaxis":"y3"},{"hoverinfo":"text+x","hovertext":["PINN-Informed-Loss R\u00b2=-11526.029","PINN-Informed-Loss R\u00b2=-2604.979","PINN-Informed-Loss R\u00b2=-949.932","PINN-Informed-Loss R\u00b2=-407.452","PINN-Informed-Loss R\u00b2=-184.793","PINN-Informed-Loss R\u00b2=-82.825","PINN-Informed-Loss R\u00b2=-34.797","PINN-Informed-Loss R\u00b2=-13.425","PINN-Informed-Loss R\u00b2=-3.114","PINN-Informed-Loss R\u00b2=-0.060","PINN-Informed-Loss R\u00b2=-0.940","PINN-Informed-Loss R\u00b2=-3.948","PINN-Informed-Loss R\u00b2=-7.993","PINN-Informed-Loss R\u00b2=-12.800"],"marker":{"color":"red","size":11,"symbol":"x"},"mode":"markers","showlegend":false,"x":["P2","P3","P4","P5","P6","P7","P8","P9","P10","P11","P13","P14","P15","P16"],"y":[0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01],"type":"scatter","xaxis":"x3","yaxis":"y3"},{"legendgroup":"PINN-Informed-Loss","marker":{"color":"#D81B60"},"name":"PINN-Informed-Loss","showlegend":false,"x":["Regime 1 (1\u20132)","Regime 2 (3\u201311)","Regime 3 (12\u201316)"],"y":[0.462282,0.08127144444444445,0.0111988],"type":"bar","xaxis":"x4","yaxis":"y4"},{"legendgroup":"RF-MDOF-PINN","marker":{"color":"#00796B"},"name":"RF-MDOF-PINN","x":["P2","P3","P4","P5","P6","P7","P8","P9","P10","P11","P12","P13","P14","P15","P16"],"y":[0.461574,0.175724,0.046621,0.01224,0.004004,0.002182,0.001706,0.001335,0.001346,0.000672,0.006332,0.001786,0.000449,0.000223,0.00011],"type":"bar","xaxis":"x","yaxis":"y"},{"legendgroup":"RF-MDOF-PINN","marker":{"color":"#00796B"},"name":"RF-MDOF-PINN","showlegend":false,"x":["P2","P3","P4","P5","P6","P7","P8","P9","P10","P11","P12","P13","P14","P15","P16"],"y":[0.461603,0.176131,0.046822,0.012538,0.004749,0.002489,0.00197,0.001432,0.001548,0.000722,0.006431,0.001803,0.000454,0.000284,0.000153],"type":"bar","xaxis":"x2","yaxis":"y2"},{"legendgroup":"RF-MDOF-PINN","marker":{"color":"#00796B"},"name":"RF-MDOF-PINN","showlegend":false,"x":["P2","P3","P4","P5","P6","P7","P8","P9","P10","P11","P12","P13","P14","P15","P16"],"y":[0.0,0.0,0.0,0.0,0.2104,0.785,0.8668,0.9262,0.9151,0.9818,0.0,0.8843,0.9927,0.9972,0.9992],"type":"bar","xaxis":"x3","yaxis":"y3"},{"hoverinfo":"text+x","hovertext":["RF-MDOF-PINN R\u00b2=-11490.892","RF-MDOF-PINN R\u00b2=-1079.531","RF-MDOF-PINN R\u00b2=-75.933","RF-MDOF-PINN R\u00b2=-4.528","RF-MDOF-PINN R\u00b2=-0.477"],"marker":{"color":"red","size":11,"symbol":"x"},"mode":"markers","showlegend":false,"x":["P2","P3","P4","P5","P12"],"y":[0.01,0.01,0.01,0.01,0.01],"type":"scatter","xaxis":"x3","yaxis":"y3"},{"legendgroup":"RF-MDOF-PINN","marker":{"color":"#00796B"},"name":"RF-MDOF-PINN","showlegend":false,"x":["Regime 1 (1\u20132)","Regime 2 (3\u201311)","Regime 3 (12\u201316)"],"y":[0.461574,0.027314444444444443,0.00178],"type":"bar","xaxis":"x4","yaxis":"y4"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"xaxis":{"anchor":"y","domain":[0.0,0.45]},"yaxis":{"anchor":"x","domain":[0.5900000000000001,1.0],"title":{"text":"MAE"}},"xaxis2":{"anchor":"y2","domain":[0.55,1.0]},"yaxis2":{"anchor":"x2","domain":[0.5900000000000001,1.0],"title":{"text":"RMSE"}},"xaxis3":{"anchor":"y3","domain":[0.0,0.45]},"yaxis3":{"anchor":"x3","domain":[0.0,0.41000000000000003],"title":{"text":"R\u00b2"}},"xaxis4":{"anchor":"y4","domain":[0.55,1.0]},"yaxis4":{"anchor":"x4","domain":[0.0,0.41000000000000003],"title":{"text":"Mean MAE"}},"annotations":[{"font":{"size":16},"showarrow":false,"text":"MAE  \u2014  Progressive Training","x":0.225,"xanchor":"center","xref":"paper","y":1.0,"yanchor":"bottom","yref":"paper"},{"font":{"size":16},"showarrow":false,"text":"RMSE  \u2014  Progressive Training","x":0.775,"xanchor":"center","xref":"paper","y":1.0,"yanchor":"bottom","yref":"paper"},{"font":{"size":16},"showarrow":false,"text":"R\u00b2  \u2014  Progressive Training   (negatives clipped; red \u2715 = was negative)","x":0.225,"xanchor":"center","xref":"paper","y":0.41000000000000003,"yanchor":"bottom","yref":"paper"},{"font":{"size":16},"showarrow":false,"text":"Mean MAE by Regime  \u2014  Progressive Training","x":0.775,"xanchor":"center","xref":"paper","y":0.41000000000000003,"yanchor":"bottom","yref":"paper"}],"legend":{"orientation":"h","y":-0.08},"barmode":"group","title":{"text":"MAE \u002f RMSE \u002f R\u00b2  \u2014  Progressive Training | Vector (multi-output) | Full Spectrum"},"height":780},                        {"responsive": true}                    )                };            </script>        </div><h2>Full Results <small>(click any column header to sort)</small></h2><table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Target_PMUT</th>
+      <th>Regime</th>
+      <th>Step_Type</th>
+      <th>Train_PMUTs</th>
+      <th>N_train</th>
+      <th>Model</th>
+      <th>MAE</th>
+      <th>RMSE</th>
+      <th>R2</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>2</td>
+      <td>Regime 1 (1–2)</td>
+      <td>progressive</td>
+      <td>[1]</td>
+      <td>1</td>
+      <td>RF</td>
+      <td>0.462314</td>
+      <td>0.462343</td>
+      <td>-11527.742000</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Regime 1 (1–2)</td>
+      <td>progressive</td>
+      <td>[1]</td>
+      <td>1</td>
+      <td>GB</td>
+      <td>0.462314</td>
+      <td>0.462343</td>
+      <td>-11527.742000</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Regime 1 (1–2)</td>
+      <td>progressive</td>
+      <td>[1]</td>
+      <td>1</td>
+      <td>MLP</td>
+      <td>0.490164</td>
+      <td>0.490530</td>
+      <td>-12976.321500</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Regime 1 (1–2)</td>
+      <td>progressive</td>
+      <td>[1]</td>
+      <td>1</td>
+      <td>PINN</td>
+      <td>0.406534</td>
+      <td>0.406555</td>
+      <td>-8913.378900</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Regime 1 (1–2)</td>
+      <td>progressive</td>
+      <td>[1]</td>
+      <td>1</td>
+      <td>MDOF-PINN</td>
+      <td>0.461564</td>
+      <td>0.461590</td>
+      <td>-11490.237100</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Regime 1 (1–2)</td>
+      <td>progressive</td>
+      <td>[1]</td>
+      <td>1</td>
+      <td>PINN-Informed-Loss</td>
+      <td>0.462282</td>
+      <td>0.462309</td>
+      <td>-11526.028500</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Regime 1 (1–2)</td>
+      <td>progressive</td>
+      <td>[1]</td>
+      <td>1</td>
+      <td>RF-MDOF-PINN</td>
+      <td>0.461574</td>
+      <td>0.461603</td>
+      <td>-11490.892400</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2]</td>
+      <td>2</td>
+      <td>RF</td>
+      <td>0.223393</td>
+      <td>0.223437</td>
+      <td>-1737.897200</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2]</td>
+      <td>2</td>
+      <td>GB</td>
+      <td>0.106056</td>
+      <td>0.106112</td>
+      <td>-391.190300</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2]</td>
+      <td>2</td>
+      <td>MLP</td>
+      <td>0.036252</td>
+      <td>0.036842</td>
+      <td>-46.276300</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2]</td>
+      <td>2</td>
+      <td>PINN</td>
+      <td>0.364272</td>
+      <td>0.364344</td>
+      <td>-4622.687500</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2]</td>
+      <td>2</td>
+      <td>MDOF-PINN</td>
+      <td>0.268404</td>
+      <td>0.268991</td>
+      <td>-2519.231000</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2]</td>
+      <td>2</td>
+      <td>PINN-Informed-Loss</td>
+      <td>0.273392</td>
+      <td>0.273529</td>
+      <td>-2604.979500</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2]</td>
+      <td>2</td>
+      <td>RF-MDOF-PINN</td>
+      <td>0.175724</td>
+      <td>0.176131</td>
+      <td>-1079.531300</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3]</td>
+      <td>3</td>
+      <td>RF</td>
+      <td>0.053012</td>
+      <td>0.053033</td>
+      <td>-97.699200</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3]</td>
+      <td>3</td>
+      <td>GB</td>
+      <td>0.015282</td>
+      <td>0.015296</td>
+      <td>-7.210000</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3]</td>
+      <td>3</td>
+      <td>MLP</td>
+      <td>0.006146</td>
+      <td>0.007321</td>
+      <td>-0.880900</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3]</td>
+      <td>3</td>
+      <td>PINN</td>
+      <td>0.332711</td>
+      <td>0.332759</td>
+      <td>-3884.737900</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3]</td>
+      <td>3</td>
+      <td>MDOF-PINN</td>
+      <td>0.155577</td>
+      <td>0.156576</td>
+      <td>-859.333200</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3]</td>
+      <td>3</td>
+      <td>PINN-Informed-Loss</td>
+      <td>0.164547</td>
+      <td>0.164614</td>
+      <td>-949.932000</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3]</td>
+      <td>3</td>
+      <td>RF-MDOF-PINN</td>
+      <td>0.046621</td>
+      <td>0.046822</td>
+      <td>-75.933400</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4]</td>
+      <td>4</td>
+      <td>RF</td>
+      <td>0.012914</td>
+      <td>0.012938</td>
+      <td>-4.886200</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4]</td>
+      <td>4</td>
+      <td>GB</td>
+      <td>0.010144</td>
+      <td>0.010155</td>
+      <td>-2.626100</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4]</td>
+      <td>4</td>
+      <td>MLP</td>
+      <td>0.020608</td>
+      <td>0.021083</td>
+      <td>-14.630400</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4]</td>
+      <td>4</td>
+      <td>PINN</td>
+      <td>0.274227</td>
+      <td>0.274290</td>
+      <td>-2644.537000</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4]</td>
+      <td>4</td>
+      <td>MDOF-PINN</td>
+      <td>0.098088</td>
+      <td>0.099417</td>
+      <td>-346.551000</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4]</td>
+      <td>4</td>
+      <td>PINN-Informed-Loss</td>
+      <td>0.107672</td>
+      <td>0.107776</td>
+      <td>-407.452100</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4]</td>
+      <td>4</td>
+      <td>RF-MDOF-PINN</td>
+      <td>0.012240</td>
+      <td>0.012538</td>
+      <td>-4.528000</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5]</td>
+      <td>5</td>
+      <td>RF</td>
+      <td>0.004231</td>
+      <td>0.004253</td>
+      <td>0.366900</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5]</td>
+      <td>5</td>
+      <td>GB</td>
+      <td>0.007902</td>
+      <td>0.007908</td>
+      <td>-1.189000</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5]</td>
+      <td>5</td>
+      <td>MLP</td>
+      <td>0.007533</td>
+      <td>0.008201</td>
+      <td>-1.354300</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5]</td>
+      <td>5</td>
+      <td>PINN</td>
+      <td>0.224478</td>
+      <td>0.224583</td>
+      <td>-1764.520600</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5]</td>
+      <td>5</td>
+      <td>MDOF-PINN</td>
+      <td>0.063616</td>
+      <td>0.064695</td>
+      <td>-145.509100</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5]</td>
+      <td>5</td>
+      <td>PINN-Informed-Loss</td>
+      <td>0.072696</td>
+      <td>0.072854</td>
+      <td>-184.793400</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5]</td>
+      <td>5</td>
+      <td>RF-MDOF-PINN</td>
+      <td>0.004004</td>
+      <td>0.004749</td>
+      <td>0.210400</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6]</td>
+      <td>6</td>
+      <td>RF</td>
+      <td>0.001942</td>
+      <td>0.001956</td>
+      <td>0.867100</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6]</td>
+      <td>6</td>
+      <td>GB</td>
+      <td>0.006522</td>
+      <td>0.006526</td>
+      <td>-0.478200</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6]</td>
+      <td>6</td>
+      <td>MLP</td>
+      <td>0.002891</td>
+      <td>0.003567</td>
+      <td>0.558400</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6]</td>
+      <td>6</td>
+      <td>PINN</td>
+      <td>0.192463</td>
+      <td>0.192574</td>
+      <td>-1286.136600</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6]</td>
+      <td>6</td>
+      <td>MDOF-PINN</td>
+      <td>0.040426</td>
+      <td>0.041381</td>
+      <td>-58.432800</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6]</td>
+      <td>6</td>
+      <td>PINN-Informed-Loss</td>
+      <td>0.048909</td>
+      <td>0.049144</td>
+      <td>-82.825200</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6]</td>
+      <td>6</td>
+      <td>RF-MDOF-PINN</td>
+      <td>0.002182</td>
+      <td>0.002489</td>
+      <td>0.785000</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7]</td>
+      <td>7</td>
+      <td>RF</td>
+      <td>0.001434</td>
+      <td>0.001438</td>
+      <td>0.929000</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7]</td>
+      <td>7</td>
+      <td>GB</td>
+      <td>0.005832</td>
+      <td>0.005835</td>
+      <td>-0.168600</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7]</td>
+      <td>7</td>
+      <td>MLP</td>
+      <td>0.002833</td>
+      <td>0.003662</td>
+      <td>0.539800</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7]</td>
+      <td>7</td>
+      <td>PINN</td>
+      <td>0.165380</td>
+      <td>0.165502</td>
+      <td>-939.193200</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7]</td>
+      <td>7</td>
+      <td>MDOF-PINN</td>
+      <td>0.024344</td>
+      <td>0.025022</td>
+      <td>-20.490900</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7]</td>
+      <td>7</td>
+      <td>PINN-Informed-Loss</td>
+      <td>0.031939</td>
+      <td>0.032294</td>
+      <td>-34.796700</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7]</td>
+      <td>7</td>
+      <td>RF-MDOF-PINN</td>
+      <td>0.001706</td>
+      <td>0.001970</td>
+      <td>0.866800</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8]</td>
+      <td>8</td>
+      <td>RF</td>
+      <td>0.001280</td>
+      <td>0.001320</td>
+      <td>0.937300</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8]</td>
+      <td>8</td>
+      <td>GB</td>
+      <td>0.005251</td>
+      <td>0.005275</td>
+      <td>-0.001200</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8]</td>
+      <td>8</td>
+      <td>MLP</td>
+      <td>0.003893</td>
+      <td>0.004830</td>
+      <td>0.160800</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8]</td>
+      <td>8</td>
+      <td>PINN</td>
+      <td>0.143703</td>
+      <td>0.143881</td>
+      <td>-743.845200</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8]</td>
+      <td>8</td>
+      <td>MDOF-PINN</td>
+      <td>0.011991</td>
+      <td>0.012854</td>
+      <td>-4.945100</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8]</td>
+      <td>8</td>
+      <td>PINN-Informed-Loss</td>
+      <td>0.019598</td>
+      <td>0.020023</td>
+      <td>-13.424700</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8]</td>
+      <td>8</td>
+      <td>RF-MDOF-PINN</td>
+      <td>0.001335</td>
+      <td>0.001432</td>
+      <td>0.926200</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9]</td>
+      <td>9</td>
+      <td>RF</td>
+      <td>0.000795</td>
+      <td>0.000803</td>
+      <td>0.977100</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9]</td>
+      <td>9</td>
+      <td>GB</td>
+      <td>0.004674</td>
+      <td>0.004681</td>
+      <td>0.223000</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9]</td>
+      <td>9</td>
+      <td>MLP</td>
+      <td>0.004332</td>
+      <td>0.005043</td>
+      <td>0.098300</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9]</td>
+      <td>9</td>
+      <td>PINN</td>
+      <td>0.129275</td>
+      <td>0.129508</td>
+      <td>-593.699200</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9]</td>
+      <td>9</td>
+      <td>MDOF-PINN</td>
+      <td>0.004504</td>
+      <td>0.005548</td>
+      <td>-0.091500</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9]</td>
+      <td>9</td>
+      <td>PINN-Informed-Loss</td>
+      <td>0.009824</td>
+      <td>0.010771</td>
+      <td>-3.113500</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9]</td>
+      <td>9</td>
+      <td>RF-MDOF-PINN</td>
+      <td>0.001346</td>
+      <td>0.001548</td>
+      <td>0.915100</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]</td>
+      <td>10</td>
+      <td>RF</td>
+      <td>0.000655</td>
+      <td>0.000663</td>
+      <td>0.984700</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]</td>
+      <td>10</td>
+      <td>GB</td>
+      <td>0.004260</td>
+      <td>0.004263</td>
+      <td>0.366400</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]</td>
+      <td>10</td>
+      <td>MLP</td>
+      <td>0.004527</td>
+      <td>0.005249</td>
+      <td>0.039400</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]</td>
+      <td>10</td>
+      <td>PINN</td>
+      <td>0.105910</td>
+      <td>0.106142</td>
+      <td>-391.770100</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]</td>
+      <td>10</td>
+      <td>MDOF-PINN</td>
+      <td>0.001706</td>
+      <td>0.002172</td>
+      <td>0.835500</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]</td>
+      <td>10</td>
+      <td>PINN-Informed-Loss</td>
+      <td>0.002866</td>
+      <td>0.005514</td>
+      <td>-0.060100</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>Regime 2 (3–11)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]</td>
+      <td>10</td>
+      <td>RF-MDOF-PINN</td>
+      <td>0.000672</td>
+      <td>0.000722</td>
+      <td>0.981800</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>Regime 3 (12–16)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]</td>
+      <td>11</td>
+      <td>RF</td>
+      <td>0.005818</td>
+      <td>0.005890</td>
+      <td>-0.239500</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>Regime 3 (12–16)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]</td>
+      <td>11</td>
+      <td>GB</td>
+      <td>0.009289</td>
+      <td>0.009335</td>
+      <td>-2.113100</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>Regime 3 (12–16)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]</td>
+      <td>11</td>
+      <td>MLP</td>
+      <td>0.002620</td>
+      <td>0.003195</td>
+      <td>0.635300</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>Regime 3 (12–16)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]</td>
+      <td>11</td>
+      <td>PINN</td>
+      <td>0.082072</td>
+      <td>0.082278</td>
+      <td>-240.864000</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>Regime 3 (12–16)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]</td>
+      <td>11</td>
+      <td>MDOF-PINN</td>
+      <td>0.002197</td>
+      <td>0.003295</td>
+      <td>0.612000</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>Regime 3 (12–16)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]</td>
+      <td>11</td>
+      <td>PINN-Informed-Loss</td>
+      <td>0.002674</td>
+      <td>0.005086</td>
+      <td>0.075900</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>Regime 3 (12–16)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]</td>
+      <td>11</td>
+      <td>RF-MDOF-PINN</td>
+      <td>0.006332</td>
+      <td>0.006431</td>
+      <td>-0.477500</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>Regime 3 (12–16)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]</td>
+      <td>12</td>
+      <td>RF</td>
+      <td>0.001781</td>
+      <td>0.001799</td>
+      <td>0.884900</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>Regime 3 (12–16)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]</td>
+      <td>12</td>
+      <td>GB</td>
+      <td>0.004302</td>
+      <td>0.004305</td>
+      <td>0.340700</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>Regime 3 (12–16)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]</td>
+      <td>12</td>
+      <td>MLP</td>
+      <td>0.002121</td>
+      <td>0.002699</td>
+      <td>0.740800</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>Regime 3 (12–16)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]</td>
+      <td>12</td>
+      <td>PINN</td>
+      <td>0.091326</td>
+      <td>0.091707</td>
+      <td>-298.217000</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>Regime 3 (12–16)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]</td>
+      <td>12</td>
+      <td>MDOF-PINN</td>
+      <td>0.006855</td>
+      <td>0.007383</td>
+      <td>-0.939300</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>Regime 3 (12–16)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]</td>
+      <td>12</td>
+      <td>PINN-Informed-Loss</td>
+      <td>0.006884</td>
+      <td>0.007384</td>
+      <td>-0.939800</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>Regime 3 (12–16)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]</td>
+      <td>12</td>
+      <td>RF-MDOF-PINN</td>
+      <td>0.001786</td>
+      <td>0.001803</td>
+      <td>0.884300</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>Regime 3 (12–16)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]</td>
+      <td>13</td>
+      <td>RF</td>
+      <td>0.000448</td>
+      <td>0.000453</td>
+      <td>0.992800</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>Regime 3 (12–16)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]</td>
+      <td>13</td>
+      <td>GB</td>
+      <td>0.003556</td>
+      <td>0.003559</td>
+      <td>0.552900</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>Regime 3 (12–16)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]</td>
+      <td>13</td>
+      <td>MLP</td>
+      <td>0.003869</td>
+      <td>0.004459</td>
+      <td>0.298200</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>Regime 3 (12–16)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]</td>
+      <td>13</td>
+      <td>PINN</td>
+      <td>0.089908</td>
+      <td>0.090215</td>
+      <td>-286.309200</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>Regime 3 (12–16)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]</td>
+      <td>13</td>
+      <td>MDOF-PINN</td>
+      <td>0.011485</td>
+      <td>0.011821</td>
+      <td>-3.932500</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>Regime 3 (12–16)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]</td>
+      <td>13</td>
+      <td>PINN-Informed-Loss</td>
+      <td>0.011503</td>
+      <td>0.011840</td>
+      <td>-3.948400</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>Regime 3 (12–16)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]</td>
+      <td>13</td>
+      <td>RF-MDOF-PINN</td>
+      <td>0.000449</td>
+      <td>0.000454</td>
+      <td>0.992700</td>
+    </tr>
+    <tr>
+      <td>15</td>
+      <td>Regime 3 (12–16)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]</td>
+      <td>14</td>
+      <td>RF</td>
+      <td>0.000222</td>
+      <td>0.000284</td>
+      <td>0.997200</td>
+    </tr>
+    <tr>
+      <td>15</td>
+      <td>Regime 3 (12–16)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]</td>
+      <td>14</td>
+      <td>GB</td>
+      <td>0.003249</td>
+      <td>0.003259</td>
+      <td>0.628300</td>
+    </tr>
+    <tr>
+      <td>15</td>
+      <td>Regime 3 (12–16)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]</td>
+      <td>14</td>
+      <td>MLP</td>
+      <td>0.003922</td>
+      <td>0.004485</td>
+      <td>0.296000</td>
+    </tr>
+    <tr>
+      <td>15</td>
+      <td>Regime 3 (12–16)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]</td>
+      <td>14</td>
+      <td>PINN</td>
+      <td>0.082732</td>
+      <td>0.083013</td>
+      <td>-240.204200</td>
+    </tr>
+    <tr>
+      <td>15</td>
+      <td>Regime 3 (12–16)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]</td>
+      <td>14</td>
+      <td>MDOF-PINN</td>
+      <td>0.015585</td>
+      <td>0.016007</td>
+      <td>-7.968000</td>
+    </tr>
+    <tr>
+      <td>15</td>
+      <td>Regime 3 (12–16)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]</td>
+      <td>14</td>
+      <td>PINN-Informed-Loss</td>
+      <td>0.015605</td>
+      <td>0.016029</td>
+      <td>-7.992900</td>
+    </tr>
+    <tr>
+      <td>15</td>
+      <td>Regime 3 (12–16)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]</td>
+      <td>14</td>
+      <td>RF-MDOF-PINN</td>
+      <td>0.000223</td>
+      <td>0.000284</td>
+      <td>0.997200</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>Regime 3 (12–16)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]</td>
+      <td>15</td>
+      <td>RF</td>
+      <td>0.000110</td>
+      <td>0.000153</td>
+      <td>0.999200</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>Regime 3 (12–16)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]</td>
+      <td>15</td>
+      <td>GB</td>
+      <td>0.002947</td>
+      <td>0.002956</td>
+      <td>0.693900</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>Regime 3 (12–16)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]</td>
+      <td>15</td>
+      <td>MLP</td>
+      <td>0.003617</td>
+      <td>0.004109</td>
+      <td>0.408100</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>Regime 3 (12–16)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]</td>
+      <td>15</td>
+      <td>PINN</td>
+      <td>0.069047</td>
+      <td>0.069504</td>
+      <td>-168.310400</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>Regime 3 (12–16)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]</td>
+      <td>15</td>
+      <td>MDOF-PINN</td>
+      <td>0.019316</td>
+      <td>0.019829</td>
+      <td>-12.780300</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>Regime 3 (12–16)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]</td>
+      <td>15</td>
+      <td>PINN-Informed-Loss</td>
+      <td>0.019328</td>
+      <td>0.019842</td>
+      <td>-12.799500</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>Regime 3 (12–16)</td>
+      <td>progressive</td>
+      <td>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]</td>
+      <td>15</td>
+      <td>RF-MDOF-PINN</td>
+      <td>0.000110</td>
+      <td>0.000153</td>
+      <td>0.999200</td>
+    </tr>
+  </tbody>
+</table></body></html>

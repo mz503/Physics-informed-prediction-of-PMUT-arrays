@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>PMUT SDOF Physics Parameter Comparison</title>
+    <style>
+        body { font-family: system-ui, sans-serif; max-width: 1500px; margin: auto; padding: 20px; background: #F8F9FA; color: #37474F; }
+        h1 { color: #1565C0; margin-bottom: 5px; }
+        p.subtitle { color: #666; margin-bottom: 25px; font-size: 0.95em; }
+        table { border-collapse: collapse; width: 100%; font-size: 12px; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+        th, td { padding: 7px 10px; text-align: center; border: 1px solid #E0E0E0; }
+        th { background: #37474F; color: white; font-weight: 600; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.3px; }
+        tr:nth-child(even) { background: #F9F9F9; }
+        .hdr-group { background: #CFD8DC; font-weight: bold; color: #263238; }
+        .diff { font-size: 10.5px; color: #D81B60; font-weight: 500; }
+    </style>
+</head>
+<body>
+    <h1>PMUT SDOF Physics Parameter Comparison</h1>
+    <p class="subtitle">
+        Comparison of <b>True SDOF parameters</b> (obtained via direct gradient descent fit to the experimental response curves) 
+        vs. <b>Estimated SDOF parameters</b> predicted by the Physics-Informed Neural Network (PINN).
+    </p>
+    <table>
+        <thead>
+            <tr class="hdr-group">
+                <th>PMUT</th>
+                <th colspan="3">Mass (m)</th>
+                <th colspan="3">Resonant Freq (f0 MHz)</th>
+                <th colspan="3">Quality Factor (Q)</th>
+                <th colspan="3">Damping (c)</th>
+                <th colspan="3">Stiffness (k)</th>
+                <th colspan="3">Force Coeff (&alpha;)</th>
+                <th colspan="3">Gain (G)</th>
+                <th colspan="3">Background (A<sub>bg</sub>)</th>
+                <th colspan="3">Peak Displ (|X|<sub>peak</sub>)</th>
+            </tr>
+            <tr>
+                <th>N</th>
+                <th>True</th><th>Est</th><th>Diff %</th>
+                <th>True</th><th>Est</th><th>Diff %</th>
+                <th>True</th><th>Est</th><th>Diff %</th>
+                <th>True</th><th>Est</th><th>Diff %</th>
+                <th>True</th><th>Est</th><th>Diff %</th>
+                <th>True</th><th>Est</th><th>Diff %</th>
+                <th>True</th><th>Est</th><th>Diff %</th>
+                <th>True</th><th>Est</th><th>Diff %</th>
+                <th>True</th><th>Est</th><th>Diff %</th>
+            </tr>
+        </thead>
+        <tbody>
+<tr><td>P1</td><td>0.38000</td><td>0.38000</td><td class='diff'>0.0%</td><td>1.54622</td><td>1.52856</td><td class='diff'>1.1%</td><td>1.19804</td><td>1.05517</td><td class='diff'>11.9%</td><td>3.08149</td><td>3.45876</td><td class='diff'>12.2%</td><td>35.86602</td><td>35.05146</td><td class='diff'>2.3%</td><td>0.61714</td><td>0.67276</td><td class='diff'>9.0%</td><td>1.00000</td><td>0.50413</td><td class='diff'>49.6%</td><td>0.51946</td><td>1.02238</td><td class='diff'>96.8%</td><td>0.20615</td><td>0.20253</td><td class='diff'>1.8%</td></tr>
+<tr><td>P2</td><td>0.38000</td><td>0.38000</td><td class='diff'>0.0%</td><td>1.53033</td><td>1.55206</td><td class='diff'>1.4%</td><td>1.18337</td><td>1.05234</td><td class='diff'>11.1%</td><td>3.08765</td><td>3.52142</td><td class='diff'>14.0%</td><td>35.13285</td><td>36.13780</td><td class='diff'>2.9%</td><td>0.61772</td><td>0.67281</td><td class='diff'>8.9%</td><td>1.00000</td><td>0.49961</td><td class='diff'>50.0%</td><td>0.97873</td><td>1.03967</td><td class='diff'>6.2%</td><td>0.20806</td><td>0.19592</td><td class='diff'>5.8%</td></tr>
+<tr><td>P3</td><td>0.38000</td><td>0.38000</td><td class='diff'>0.0%</td><td>0.91620</td><td>1.57591</td><td class='diff'>72.0%</td><td>1.48051</td><td>1.04953</td><td class='diff'>29.1%</td><td>1.47755</td><td>3.58511</td><td class='diff'>142.6%</td><td>12.59286</td><td>37.25706</td><td class='diff'>195.9%</td><td>0.51472</td><td>0.67280</td><td class='diff'>30.7%</td><td>1.00000</td><td>0.49507</td><td class='diff'>50.5%</td><td>0.84296</td><td>1.05709</td><td class='diff'>25.4%</td><td>0.60514</td><td>0.18953</td><td class='diff'>68.7%</td></tr>
+<tr><td>P4</td><td>0.38000</td><td>0.38000</td><td class='diff'>0.0%</td><td>0.91411</td><td>1.60011</td><td class='diff'>75.0%</td><td>1.48133</td><td>1.04674</td><td class='diff'>29.3%</td><td>1.47336</td><td>3.64984</td><td class='diff'>147.7%</td><td>12.53543</td><td>38.40996</td><td class='diff'>206.4%</td><td>0.51426</td><td>0.67271</td><td class='diff'>30.8%</td><td>1.00000</td><td>0.49051</td><td class='diff'>50.9%</td><td>0.84757</td><td>1.07465</td><td class='diff'>26.8%</td><td>0.60771</td><td>0.18333</td><td class='diff'>69.8%</td></tr>
+<tr><td>P5</td><td>0.38000</td><td>0.38000</td><td class='diff'>0.0%</td><td>0.91424</td><td>1.62465</td><td class='diff'>77.7%</td><td>1.48125</td><td>1.04398</td><td class='diff'>29.5%</td><td>1.47365</td><td>3.71561</td><td class='diff'>152.1%</td><td>12.53900</td><td>39.59726</td><td class='diff'>215.8%</td><td>0.51417</td><td>0.67256</td><td class='diff'>30.8%</td><td>1.00000</td><td>0.48594</td><td class='diff'>51.4%</td><td>0.85076</td><td>1.09235</td><td class='diff'>28.4%</td><td>0.60740</td><td>0.17732</td><td class='diff'>70.8%</td></tr>
+<tr><td>P6</td><td>0.38000</td><td>0.38000</td><td class='diff'>0.0%</td><td>0.91207</td><td>1.64954</td><td class='diff'>80.9%</td><td>1.48196</td><td>1.04125</td><td class='diff'>29.7%</td><td>1.46945</td><td>3.78244</td><td class='diff'>157.4%</td><td>12.47962</td><td>40.81966</td><td class='diff'>227.1%</td><td>0.51381</td><td>0.67235</td><td class='diff'>30.9%</td><td>1.00000</td><td>0.48134</td><td class='diff'>51.9%</td><td>0.85106</td><td>1.11018</td><td class='diff'>30.4%</td><td>0.61015</td><td>0.17151</td><td class='diff'>71.9%</td></tr>
+<tr><td>P7</td><td>0.38000</td><td>0.38000</td><td class='diff'>0.0%</td><td>0.91435</td><td>1.67477</td><td class='diff'>83.2%</td><td>1.48111</td><td>1.03854</td><td class='diff'>29.9%</td><td>1.47397</td><td>3.85032</td><td class='diff'>161.2%</td><td>12.54208</td><td>42.07789</td><td class='diff'>235.5%</td><td>0.51408</td><td>0.67206</td><td class='diff'>30.7%</td><td>1.00000</td><td>0.47673</td><td class='diff'>52.3%</td><td>0.85392</td><td>1.12814</td><td class='diff'>32.1%</td><td>0.60708</td><td>0.16587</td><td class='diff'>72.7%</td></tr>
+<tr><td>P8</td><td>0.38000</td><td>0.38000</td><td class='diff'>0.0%</td><td>0.91434</td><td>1.70034</td><td class='diff'>86.0%</td><td>1.48102</td><td>1.03585</td><td class='diff'>30.1%</td><td>1.47403</td><td>3.91925</td><td class='diff'>165.9%</td><td>12.54166</td><td>43.37268</td><td class='diff'>245.8%</td><td>0.51407</td><td>0.67171</td><td class='diff'>30.7%</td><td>1.00000</td><td>0.47210</td><td class='diff'>52.8%</td><td>0.85485</td><td>1.14623</td><td class='diff'>34.1%</td><td>0.60705</td><td>0.16042</td><td class='diff'>73.6%</td></tr>
+<tr><td>P9</td><td>0.38000</td><td>0.38000</td><td class='diff'>0.0%</td><td>0.90777</td><td>1.72625</td><td class='diff'>90.2%</td><td>1.48345</td><td>1.03319</td><td class='diff'>30.4%</td><td>1.46106</td><td>3.98923</td><td class='diff'>173.0%</td><td>12.36227</td><td>44.70469</td><td class='diff'>261.6%</td><td>0.51313</td><td>0.67129</td><td class='diff'>30.8%</td><td>1.00000</td><td>0.46745</td><td class='diff'>53.3%</td><td>0.85068</td><td>1.16445</td><td class='diff'>36.9%</td><td>0.61575</td><td>0.15514</td><td class='diff'>74.8%</td></tr>
+<tr><td>P10</td><td>0.38000</td><td>0.38000</td><td class='diff'>0.0%</td><td>0.90777</td><td>1.75251</td><td class='diff'>93.1%</td><td>1.48338</td><td>1.03054</td><td class='diff'>30.5%</td><td>1.46113</td><td>4.06028</td><td class='diff'>177.9%</td><td>12.36223</td><td>46.07464</td><td class='diff'>272.7%</td><td>0.51312</td><td>0.67080</td><td class='diff'>30.7%</td><td>1.00000</td><td>0.46279</td><td class='diff'>53.7%</td><td>0.85112</td><td>1.18280</td><td class='diff'>39.0%</td><td>0.61571</td><td>0.15004</td><td class='diff'>75.6%</td></tr>
+<tr><td>P11</td><td>0.38000</td><td>0.38000</td><td class='diff'>0.0%</td><td>0.90999</td><td>1.77909</td><td class='diff'>95.5%</td><td>1.48258</td><td>1.02793</td><td class='diff'>30.7%</td><td>1.46549</td><td>4.13238</td><td class='diff'>182.0%</td><td>12.42263</td><td>47.48320</td><td class='diff'>282.2%</td><td>0.51342</td><td>0.67024</td><td class='diff'>30.5%</td><td>1.00000</td><td>0.45811</td><td class='diff'>54.2%</td><td>0.85317</td><td>1.20127</td><td class='diff'>40.8%</td><td>0.61274</td><td>0.14509</td><td class='diff'>76.3%</td></tr>
+<tr><td>P12</td><td>0.38000</td><td>0.38000</td><td class='diff'>0.0%</td><td>0.90563</td><td>1.80601</td><td class='diff'>99.4%</td><td>1.48342</td><td>1.02533</td><td class='diff'>30.9%</td><td>1.45764</td><td>4.20554</td><td class='diff'>188.5%</td><td>12.30394</td><td>48.93110</td><td class='diff'>297.7%</td><td>0.51281</td><td>0.66961</td><td class='diff'>30.6%</td><td>1.00000</td><td>0.45341</td><td class='diff'>54.7%</td><td>0.85558</td><td>1.21986</td><td class='diff'>42.6%</td><td>0.61826</td><td>0.14031</td><td class='diff'>77.3%</td></tr>
+<tr><td>P13</td><td>0.38000</td><td>0.38000</td><td class='diff'>0.0%</td><td>0.90783</td><td>1.83326</td><td class='diff'>101.9%</td><td>1.48261</td><td>1.02275</td><td class='diff'>31.0%</td><td>1.46198</td><td>4.27977</td><td class='diff'>192.7%</td><td>12.36387</td><td>50.41892</td><td class='diff'>307.8%</td><td>0.51311</td><td>0.66891</td><td class='diff'>30.4%</td><td>1.00000</td><td>0.44871</td><td class='diff'>55.1%</td><td>0.85725</td><td>1.23856</td><td class='diff'>44.5%</td><td>0.61529</td><td>0.13569</td><td class='diff'>77.9%</td></tr>
+<tr><td>P14</td><td>0.38000</td><td>0.38000</td><td class='diff'>0.0%</td><td>0.90783</td><td>1.86084</td><td class='diff'>105.0%</td><td>1.48260</td><td>1.02019</td><td class='diff'>31.2%</td><td>1.46200</td><td>4.35505</td><td class='diff'>197.9%</td><td>12.36390</td><td>51.94737</td><td class='diff'>320.2%</td><td>0.51310</td><td>0.66814</td><td class='diff'>30.2%</td><td>1.00000</td><td>0.44399</td><td class='diff'>55.6%</td><td>0.85728</td><td>1.25739</td><td class='diff'>46.7%</td><td>0.61528</td><td>0.13122</td><td class='diff'>78.7%</td></tr>
+<tr><td>P15</td><td>0.38000</td><td>0.38000</td><td class='diff'>0.0%</td><td>0.91005</td><td>1.88875</td><td class='diff'>107.5%</td><td>1.48181</td><td>1.01765</td><td class='diff'>31.3%</td><td>1.46635</td><td>4.43138</td><td class='diff'>202.2%</td><td>12.42437</td><td>53.51707</td><td class='diff'>330.7%</td><td>0.51340</td><td>0.66730</td><td class='diff'>30.0%</td><td>1.00000</td><td>0.43926</td><td class='diff'>56.1%</td><td>0.85908</td><td>1.27632</td><td class='diff'>48.6%</td><td>0.61231</td><td>0.12689</td><td class='diff'>79.3%</td></tr>
+<tr><td>P16</td><td>0.38000</td><td>0.38000</td><td class='diff'>0.0%</td><td>0.91004</td><td>1.91698</td><td class='diff'>110.6%</td><td>1.48183</td><td>1.01513</td><td class='diff'>31.5%</td><td>1.46630</td><td>4.50878</td><td class='diff'>207.5%</td><td>12.42405</td><td>55.12865</td><td class='diff'>343.7%</td><td>0.51341</td><td>0.66639</td><td class='diff'>29.8%</td><td>1.00000</td><td>0.43452</td><td class='diff'>56.5%</td><td>0.85910</td><td>1.29537</td><td class='diff'>50.8%</td><td>0.61235</td><td>0.12271</td><td class='diff'>80.0%</td></tr>
+
+        </tbody>
+    </table>
+</body>
+</html>

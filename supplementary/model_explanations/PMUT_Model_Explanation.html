@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PMUT Physics-Informed and Reduced-Order Models</title>
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --soft: #eef3ff;
+      --text: #1f2937;
+      --muted: #58657a;
+      --accent: #1d4ed8;
+      --accent2: #0f766e;
+      --accent3: #7c3aed;
+      --border: #dfe7f5;
+      --warn: #b45309;
+      --good: #15803d;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", Arial, sans-serif;
+      line-height: 1.6;
+    }
+
+    .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px 24px 80px;
+    }
+
+    h1, h2, h3 {
+      margin: 0 0 12px;
+      line-height: 1.2;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 3vw, 3rem);
+      color: var(--accent);
+    }
+
+    h2 {
+      margin-top: 42px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--border);
+      color: #0f172a;
+    }
+
+    h3 {
+      margin-top: 24px;
+      color: #1e293b;
+    }
+
+    p, li {
+      color: var(--text);
+      font-size: 1.02rem;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 1.05rem;
+      margin-bottom: 24px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px 20px;
+      margin-top: 18px;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .kicker {
+      display: inline-block;
+      font-size: 0.74rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: var(--soft);
+      color: var(--accent);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    pre, .equation {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 16px 18px;
+      border-radius: 12px;
+      overflow-x: auto;
+      font-size: 0.97rem;
+      line-height: 1.5;
+      margin: 14px 0;
+      border: 1px solid #1e293b;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 12px;
+    }
+
+    th, td {
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+
+    .metric {
+      display: inline-block;
+      min-width: 120px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      background: #ecfdf5;
+      border: 1px solid #bbf7d0;
+      color: var(--good);
+      font-weight: 700;
+      margin: 6px 8px 8px 0;
+    }
+
+    .note {
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    ul, ol {
+      padding-left: 22px;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover { text-decoration: underline; }
+
+    @media (max-width: 800px) {
+      .two-col { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="kicker">PMUT modeling overview</div>
+    <h1>Physics-informed and reduced-order models for PMUT response prediction</h1>
+    <p class="subtitle">
+      This report summarizes how the project fits and compares four complementary models for PMUT frequency-response data:
+      the single-mode SDOF physics model, the PINN surrogate, the multi-branch Butterworth–Van Dyke (BVD) equivalent circuit,
+      and the multi-mode mechanical MDOF model. The goal is to learn the physical parameters behind resonance and to predict
+      full spectral curves as the PMUT array size N changes.
+    </p>
+
+    <div class="card">
+      <h3>Project context</h3>
+      <p>
+        The data consists of measured PMUT amplitude spectra over frequency, indexed by array size N. The problem is to map the array size
+        to a frequency response model and to recover interpretable physical parameters such as resonance frequency, stiffness, damping,
+        background offset, and modal gain. In the repository, this is done through a combination of direct fitting, physics-informed
+        network training, and circuit/mode-based parameter extraction.
+      </p>
+      <ul>
+        <li>Direct-fit SDOF model is used as the “ground truth” reference for each PMUT spectrum.</li>
+        <li>PINN learns the mapping from N to SDOF parameters across the full array range.</li>
+        <li>BVD fits an electrical equivalent circuit to the admittance magnitude.</li>
+        <li>MDOF fits a superposition of several mechanical resonators to the response.</li>
+      </ul>
+    </div>
+
+    <h2>1) SDOF physics model</h2>
+    <div class="two-col">
+      <div>
+        <p>
+          The single-degree-of-freedom (SDOF) model treats a PMUT as a forced, damped oscillator. The code fixes the effective mass to
+          <strong>m = 0.38</strong> and estimates the parameters for each PMUT: the force coefficient <strong>&alpha;</strong>, resonant
+          frequency <strong>f0</strong>, quality factor <strong>Q</strong>, gain <strong>G</strong>, and background offset <strong>A_bg</strong>.
+        </p>
+        <div class="equation">
+          \[
+          \omega = 2\pi f, \quad \omega_0 = 2\pi f_0
+          \]
+          \[
+          k = m\omega_0^2, \quad c = \frac{m\omega_0}{Q}
+          \]
+          \[
+          |X(\omega)| = \frac{\alpha V}{\sqrt{(k - m\omega^2)^2 + (c\omega)^2 + 10^{-12}}}
+          \]
+          \[
+          A_{\text{pred}}(f) = G|X(\omega)| + A_{bg}
+          \]
+        </div>
+      </div>
+      <div class="card">
+        <h3>Physical meaning of the parameters</h3>
+        <ul>
+          <li><strong>&alpha;</strong>: force-to-displacement coupling coefficient.</li>
+          <li><strong>f0</strong>: resonant frequency, in MHz.</li>
+          <li><strong>Q</strong>: quality factor, describing damping and selectivity.</li>
+          <li><strong>k</strong>: effective stiffness, computed from the mass and resonant frequency.</li>
+          <li><strong>c</strong>: effective damping coefficient, computed from m, ω0, and Q.</li>
+          <li><strong>G</strong>: gain or scaling factor from displacement to measured amplitude.</li>
+          <li><strong>A_bg</strong>: baseline offset or background response.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>How the SDOF parameters were extracted</h3>
+    <p>
+      For each measured PMUT spectrum, the function <strong>fit_sdof_directly</strong> initializes a PyTorch optimization with a small set of
+      learnable parameters: <strong>[alpha, f0, Q, A_bg]</strong>. The optimization minimizes a variance-normalized MSE between the model output
+      and the measured amplitude spectrum, with a small regularization on unrealistic Q values.
+    </p>
+    <div class="equation">
+      \[
+      \text{loss} = \frac{\mathrm{MSE}(A_{\text{pred}}, A_{\text{true}})}{\mathrm{Var}(A_{\text{true}})} + 10^{-3}\,q_{\text{reg}}
+      \]
+      \[
+      q_{\text{reg}} = \mathrm{ReLU}(0.1 - Q)^2 + \mathrm{ReLU}(Q - 500)^2
+      \]
+    </div>
+    <p>
+      This direct fit produces the “true” SDOF parameter set used as a reference against which the PINN estimates are compared. It is stored in
+      the physics comparison table and the associated HTML outputs.
+    </p>
+
+    <h2>2) PINN for array-size-to-physics mapping</h2>
+    <div class="two-col">
+      <div>
+        <p>
+          The PINN does not fit one PMUT at a time. Instead, it learns a function from array size N to the SDOF parameter vector
+          <strong>[alpha_N, f0_N, Q_N, G_N, A_bg]</strong>. The neural network input is a scalar N value; the output is a physics-parameter set
+          for the PMUT with that array size.
+        </p>
+        <div class="equation">
+          \[
+          N \;\mapsto\; [\alpha_N, f_{0,N}, Q_N, G_N, A_{bg}]
+          \]
+          \[
+          \omega_{0,N} = 2\pi f_{0,N}, \quad k_N = m\omega_{0,N}^2
+          \]
+          \[
+          c_N = \frac{m\omega_{0,N}}{Q_N}
+          \]
+          \[
+          A_{\text{pred}}(f, N) = G_N |X(\omega, N)| + A_{bg}
+          \]
+          \[
+          |X(\omega, N)| = \frac{\alpha_N V}{\sqrt{(k_N - m\omega^2)^2 + (c_N\omega)^2 + 10^{-12}}}
+          \]
+        </div>
+      </div>
+      <div class="card">
+        <h3>Network architecture</h3>
+        <ul>
+          <li>Input: scalar PMUT array size N.</li>
+          <li>Hidden layers: two SiLU layers with dimension 32.</li>
+          <li>Output: five constrained parameters for the single-mode model.</li>
+          <li>Positivity constraints: Softplus applied to alpha, f0, Q, and G.</li>
+          <li>Mass is fixed to m = 0.38 and is treated as a physical constant.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>How the PINN was trained</h3>
+    <p>
+      In the code, <strong>fit_pinn</strong> assembles frequency-response pairs from all PMUTs, stacks the N, frequency, and amplitude arrays,
+      and trains the model with Adam optimizer. The loss is the mean squared error between predicted and measured amplitudes plus a mild Q-penalty.
+    </p>
+    <div class="equation">
+      \[
+      \text{loss} = \mathrm{MSE}(A_{\text{pred}}, A_{\text{true}}) + 10^{-4}\,q_{\text{reg}}
+      \]
+      \[
+      q_{\text{reg}} = \mathrm{mean}\left(\mathrm{ReLU}(0.5 - Q)^2 + \mathrm{ReLU}(Q - 100)^2\right)
+      \]
+    </div>
+    <p>
+      The output parameters are explicitly constrained to be physically meaningful: alpha, f0, Q, and G are positive; the background offset is
+      allowed to be unbounded. This makes the learned model interpretable and keeps it consistent with the theoretical SDOF oscillator form.
+    </p>
+
+    <h2>3) BVD equivalent circuit model</h2>
+    <div class="two-col">
+      <div>
+        <p>
+          The Butterworth–Van Dyke (BVD) model explains the PMUT as an electrical equivalent network with a static capacitance <strong>C0</strong>
+          and a set of resonant motional branches. Each branch is represented by a motional resistance, inductance, and capacitance.
+        </p>
+        <div class="equation">
+          \[
+          Y_{\text{static}}(\omega) = j\omega C_0
+          \]
+          \[
+          Z_{m,i}(\omega) = R_{m,i} + j\left(\omega L_{m,i} - \frac{1}{\omega C_{m,i}}\right)
+          \]
+          \[
+          Y_{m,i}(\omega) = \frac{1}{Z_{m,i}(\omega)}
+          \]
+          \[
+          |Y_{\text{pred}}(\omega)| = \left|Y_{\text{static}}(\omega) + \sum_i Y_{m,i}(\omega)\right| + A_{bg}
+          \]
+        </div>
+      </div>
+      <div class="card">
+        <h3>BVD parameters</h3>
+        <ul>
+          <li><strong>C0</strong>: static capacitance.</li>
+          <li><strong>A_bg</strong>: background admittance offset.</li>
+          <li><strong>f0,i</strong>: resonance frequency of branch i.</li>
+          <li><strong>Q_i</strong>: quality factor of branch i.</li>
+          <li><strong>R_m,i, L_m,i, C_m,i</strong>: branch motional electrical parameters.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>How BVD was trained</h3>
+    <p>
+      The function <strong>fit_bvd_pmut</strong> converts the measured frequency points to angular frequency, initializes the branch resonances from
+      spectral peaks, and optimizes the BVD parameters with Adam in double precision. The loss is a variance-normalized MSE between the predicted
+      admittance magnitude and the measured magnitude. The code uses Softplus transformations to enforce positivity for the physical parameters.
+    </p>
+    <div class="equation">
+      \[
+      \text{loss} = \frac{\mathrm{MSE}(|Y_{\text{pred}}|, |Y_{\text{true}}|)}{\mathrm{Var}(|Y_{\text{true}}|)}
+      \]
+    </div>
+    <p>
+      This model is useful because it describes the PMUT as an electrical resonator with physically meaningful values that can be compared to the
+      mechanical oscillation model.
+    </p>
+
+    <h2>4) MDOF mechanical superposition model</h2>
+    <div class="two-col">
+      <div>
+        <p>
+          The multi-mode mechanical superposition model assumes the response is the sum of several uncoupled resonant modes. Each mode contributes a
+          transfer function <strong>H_i(ω)</strong>, and the total response is the amplitude of the sum.
+        </p>
+        <div class="equation">
+          \[
+          A_{bg,\text{init}} = \min(y_{\text{true}}), \quad y_{\text{centered}} = y_{\text{true}} - A_{bg,\text{init}}
+          \]
+          \[
+          S = \max(y_{\text{centered}}), \quad y_{\text{norm}} = \frac{y_{\text{centered}}}{S}
+          \]
+          \[
+          H_i(\omega) = \frac{\alpha_i V}{(k_i - m_i\omega^2) + j(c_i\omega)}
+          \]
+          \[
+          y_{\text{pred,norm}}(\omega) = \left|\sum_i H_i(\omega)\right|, \quad
+          y_{\text{pred,actual}}(\omega) = y_{\text{pred,norm}}(\omega)S + A_{bg}
+          \]
+        </div>
+      </div>
+      <div class="card">
+        <h3>MDOF parameters</h3>
+        <ul>
+          <li><strong>f0,i</strong>: modal resonance frequencies.</li>
+          <li><strong>Q_i</strong>: modal quality factors.</li>
+          <li><strong>k_i</strong>: modal stiffness.</li>
+          <li><strong>c_i</strong>: modal damping.</li>
+          <li><strong>&alpha;i</strong>: modal excitation coefficient.</li>
+          <li><strong>A_bg</strong>: baseline offset.</li>
+          <li><strong>S</strong>: overall scale factor used during normalization.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>How MDOF was trained</h3>
+    <p>
+      In <strong>fit_mdof_pmut</strong>, the measured amplitude is first normalized by subtracting the minimum and dividing by the maximum range.
+      The model then initializes modal frequencies from magnitude peaks in the spectrum and optimizes each mode’s frequency, damping, and mode gain.
+      The total response is the magnitude of the sum of modal responses, with a modest penalty on non-physical Q values.
+    </p>
+    <div class="equation">
+      \[
+      \text{total\_loss} = \mathrm{MSE}\left(\left|\sum_i H_i(\omega)\right|, y_{\text{norm}}\right) + 10^{-3}\,q_{\text{penalty}}
+      \]
+    </div>
+    <p>
+      This gives a physically interpretable multi-resonance description that is more flexible than the single-mode SDOF model while remaining tied to the
+      mechanics of the PMUT.
+    </p>
+
+    <h2>5) Training workflow and parameter extraction pipeline</h2>
+    <p>
+      The project follows a consistent recipe for all the models:
+    </p>
+    <ol>
+      <li>Load each PMUT spectrum and sort it by frequency.</li>
+      <li>Extract a direct-fit SDOF reference using <strong>fit_sdof_directly</strong>.</li>
+      <li>Train or fit the physics-informed or reduced-order model to the spectral data.</li>
+      <li>Extract the physical parameters from the model and compare them to the direct-fit reference.</li>
+      <li>Save CSV and HTML comparison tables for inspection and plotting.</li>
+    </ol>
+
+    <div class="card">
+      <h3>Outputs produced by the project</h3>
+      <ul>
+        <li>PINN physics comparison: output tables and HTML comparison of true vs. estimated SDOF parameters.</li>
+        <li>BVD comparison: extracted C0, A_bg, per-mode f0, Q, R_m, L_m, C_m.</li>
+        <li>MDOF comparison: extracted mode frequencies, Qs, stiffnesses, dampings, gains, and baseline.</li>
+        <li>Progressive and regime-aware training outputs: multi-model performance summaries over PMUT index.</li>
+      </ul>
+    </div>
+
+    <h2>6) Results and interpretation</h2>
+    <p>
+      Across the PMUT dataset, the fitted models capture the resonance structure well and show a clear relationship between the array size and the mechanics.
+      The direct-fit SDOF model provides a physically grounded reference, while the PINN learns a smooth mapping from N to the fitted physics parameters across
+      the array. The BVD and MDOF models provide alternative views of the same response: an electrical circuit perspective and a mechanical multi-modal perspective.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>Primary idea</th>
+          <th>Strength</th>
+          <th>Typical interpretation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>SDOF</td>
+          <td>Single damped oscillator</td>
+          <td>Simple and physically interpretable</td>
+          <td>Baseline resonance, damping, stiffness and gain</td>
+        </tr>
+        <tr>
+          <td>PINN</td>
+          <td>Neural mapping N → SDOF parameters</td>
+          <td>Predicts across array sizes without per-device fitting</td>
+          <td>Fast surrogate for physics-conditioned PMUT response</td>
+        </tr>
+        <tr>
+          <td>BVD</td>
+          <td>Equivalent electrical circuit</td>
+          <td>Captures electrical admittance behavior and branch resonances</td>
+          <td>C0, branch resonances, motional resistance and inductance</td>
+        </tr>
+        <tr>
+          <td>MDOF</td>
+          <td>Sum of resonant modes</td>
+          <td>More flexible than SDOF; models multiple modal peaks</td>
+          <td>Multi-mode mechanics, damping and mode strengths</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p style="margin-top: 16px;">
+      In the project’s comparison outputs, the fitted values from the two physics-informed models are evaluated against the direct-fit SDOF results.
+      The plots and tables show that the PINN estimates of <strong>f0</strong>, <strong>Q</strong>, <strong>k</strong>, and <strong>c</strong> follow the same trends
+      as the direct-fit values, while the multi-mode forms capture additional spectral detail when multiple resonant branches are present.
+      The progressive-training HTML reports indicate that the single-mode and multi-mode predictions achieve low to moderate MAE and track the dominant
+      resonance trend across PMUT sizes, with the best-performing models generally reducing error substantially compared with a naive baseline.
+    </p>
+
+    <div class="card">
+      <h3>Representative summary from the project outputs</h3>
+      <div class="metric">PINN captures resonance trend</div>
+      <div class="metric">BVD identifies branch resonances</div>
+      <div class="metric">MDOF resolves modal composition</div>
+      <div class="metric">Direct SDOF is reference baseline</div>
+      <p class="note" style="margin-top: 12px;">
+        The concrete CSV/HTML result files in the repository are the authoritative source for exact per-device parameter values and final metrics.
+      </p>
+    </div>
+
+    <h2>7) Conclusion</h2>
+    <p>
+      The project combines a physically grounded SDOF model with data-driven learning and reduced-order circuit/mode descriptions to explain and predict
+      PMUT frequency responses. The SDOF equations give the mechanistic interpretation, the PINN provides a fast mapping across array sizes, and the BVD/MDOF
+      models offer complementary views of the same underlying dynamics. Together, they produce a consistent picture: the PMUT response is governed by a resonant
+      mechanical system whose stiffness, damping, resonance frequency, and background response change systematically with array size and can be learned and modeled.
+    </p>
+
+    <p class="note">
+      This HTML summary mirrors the implementation in the project files, especially the direct-fit routines, PINN training loop, BVD fitting routine,
+      and MDOF fitting routine used to generate the output tables and comparison figures.
+    </p>
+  </div>
+</body>
+</html>

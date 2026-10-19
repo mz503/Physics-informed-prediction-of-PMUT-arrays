@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>PMUT BVD Circuit Parameters</title>
+    <style>
+        body { font-family: system-ui, sans-serif; max-width: 1500px; margin: auto; padding: 20px; background: #F8F9FA; color: #37474F; }
+        h1 { color: #00838F; margin-bottom: 5px; }
+        p.subtitle { color: #666; margin-bottom: 25px; font-size: 0.95em; }
+        table { border-collapse: collapse; width: 100%; font-size: 12px; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+        th, td { padding: 7px 10px; text-align: center; border: 1px solid #E0E0E0; }
+        th { background: #00695C; color: white; font-weight: 600; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.3px; }
+        tr:nth-child(even) { background: #F9F9F9; }
+        .hdr-group { background: #B2DFDB; font-weight: bold; color: #004D40; }
+    </style>
+</head>
+<body>
+    <h1>PMUT Butterworth-Van Dyke (BVD) Circuit Parameters</h1>
+    <p class="subtitle">
+        Extracted electrical BVD circuit parameters ($C_0$, $A_{\text{bg}}$, and motional branch parameters $f_0, Q, R_m, L_m, C_m$)
+        fitted using PyTorch double precision (float64) multi-branch optimizer.
+    </p>
+    <table>
+        <thead>
+            <tr class="hdr-group">
+                <th>PMUT</th>
+                <th colspan="3">Global Circuit Baseline</th>
+                <th colspan="5">Motional Mode 1</th>
+                <th colspan="5">Motional Mode 2</th>
+                <th colspan="5">Motional Mode 3</th>
+            </tr>
+            <tr>
+                <th>N</th>
+                <th>C<sub>0</sub></th><th>A<sub>bg</sub></th><th>Fit Loss</th>
+                <th>f<sub>0</sub> (MHz)</th><th>Q</th><th>R<sub>m</sub></th><th>L<sub>m</sub></th><th>C<sub>m</sub></th>
+                <th>f<sub>0</sub> (MHz)</th><th>Q</th><th>R<sub>m</sub></th><th>L<sub>m</sub></th><th>C<sub>m</sub></th>
+                <th>f<sub>0</sub> (MHz)</th><th>Q</th><th>R<sub>m</sub></th><th>L<sub>m</sub></th><th>C<sub>m</sub></th>
+            </tr>
+        </thead>
+        <tbody>
+<tr><td>P1</td><td>3.8583e-02</td><td>0.0387</td><td>4.531e+08</td><td>1.2179</td><td>18.9</td><td>1.251e-03</td><td>3.096e-03</td><td>5.516e+00</td><td>3.6094</td><td>19.0</td><td>3.485e-03</td><td>2.918e-03</td><td>6.664e-01</td><td>2.7469</td><td>19.1</td><td>2.526e-03</td><td>2.792e-03</td><td>1.203e+00</td></tr>
+<tr><td>P2</td><td>9.3824e-02</td><td>0.0665</td><td>1.445e+09</td><td>1.0858</td><td>19.0</td><td>1.093e-03</td><td>3.036e-03</td><td>7.075e+00</td><td>1.7563</td><td>18.9</td><td>1.948e-03</td><td>3.330e-03</td><td>2.466e+00</td><td>2.7204</td><td>19.1</td><td>2.286e-03</td><td>2.558e-03</td><td>1.338e+00</td></tr>
+<tr><td>P3</td><td>1.0642e-01</td><td>0.0730</td><td>1.005e+09</td><td>1.0488</td><td>19.0</td><td>1.048e-03</td><td>3.017e-03</td><td>7.634e+00</td><td>1.7250</td><td>18.9</td><td>1.906e-03</td><td>3.317e-03</td><td>2.566e+00</td><td>2.7212</td><td>19.1</td><td>2.285e-03</td><td>2.556e-03</td><td>1.339e+00</td></tr>
+<tr><td>P4</td><td>1.0714e-01</td><td>0.0734</td><td>1.014e+09</td><td>1.0487</td><td>19.0</td><td>1.048e-03</td><td>3.017e-03</td><td>7.634e+00</td><td>1.7215</td><td>18.9</td><td>1.901e-03</td><td>3.315e-03</td><td>2.578e+00</td><td>2.7212</td><td>19.1</td><td>2.285e-03</td><td>2.556e-03</td><td>1.339e+00</td></tr>
+<tr><td>P5</td><td>7.5464e-02</td><td>0.0721</td><td>1.015e+09</td><td>1.0524</td><td>19.0</td><td>1.051e-03</td><td>3.016e-03</td><td>7.584e+00</td><td>1.7122</td><td>18.9</td><td>1.891e-03</td><td>3.316e-03</td><td>2.606e+00</td><td>3.0962</td><td>20.5</td><td>1.226e-03</td><td>1.294e-03</td><td>2.042e+00</td></tr>
+<tr><td>P6</td><td>7.5805e-02</td><td>0.0722</td><td>1.016e+09</td><td>1.0499</td><td>19.0</td><td>1.049e-03</td><td>3.014e-03</td><td>7.623e+00</td><td>1.7086</td><td>18.9</td><td>1.886e-03</td><td>3.314e-03</td><td>2.618e+00</td><td>3.0983</td><td>20.5</td><td>1.221e-03</td><td>1.288e-03</td><td>2.049e+00</td></tr>
+<tr><td>P7</td><td>7.5752e-02</td><td>0.0723</td><td>1.006e+09</td><td>1.0500</td><td>19.0</td><td>1.049e-03</td><td>3.014e-03</td><td>7.622e+00</td><td>1.7120</td><td>18.9</td><td>1.891e-03</td><td>3.316e-03</td><td>2.606e+00</td><td>3.0972</td><td>20.5</td><td>1.224e-03</td><td>1.291e-03</td><td>2.045e+00</td></tr>
+<tr><td>P8</td><td>7.5684e-02</td><td>0.0723</td><td>9.908e+08</td><td>1.0524</td><td>19.0</td><td>1.051e-03</td><td>3.016e-03</td><td>7.584e+00</td><td>1.7122</td><td>18.9</td><td>1.891e-03</td><td>3.316e-03</td><td>2.606e+00</td><td>3.0962</td><td>20.5</td><td>1.226e-03</td><td>1.294e-03</td><td>2.042e+00</td></tr>
+<tr><td>P9</td><td>7.6315e-02</td><td>0.0724</td><td>1.052e+09</td><td>1.0474</td><td>19.0</td><td>1.046e-03</td><td>3.013e-03</td><td>7.663e+00</td><td>1.7015</td><td>18.9</td><td>1.876e-03</td><td>3.310e-03</td><td>2.643e+00</td><td>3.1014</td><td>20.5</td><td>1.212e-03</td><td>1.277e-03</td><td>2.062e+00</td></tr>
+<tr><td>P10</td><td>7.6215e-02</td><td>0.0724</td><td>1.032e+09</td><td>1.0498</td><td>19.0</td><td>1.048e-03</td><td>3.015e-03</td><td>7.624e+00</td><td>1.7017</td><td>18.9</td><td>1.876e-03</td><td>3.310e-03</td><td>2.642e+00</td><td>3.1004</td><td>20.5</td><td>1.215e-03</td><td>1.280e-03</td><td>2.058e+00</td></tr>
+<tr><td>P11</td><td>7.6001e-02</td><td>0.0724</td><td>1.009e+09</td><td>1.0522</td><td>19.0</td><td>1.051e-03</td><td>3.016e-03</td><td>7.586e+00</td><td>1.7053</td><td>18.9</td><td>1.881e-03</td><td>3.312e-03</td><td>2.630e+00</td><td>3.0983</td><td>20.5</td><td>1.220e-03</td><td>1.287e-03</td><td>2.050e+00</td></tr>
+<tr><td>P12</td><td>7.7770e-02</td><td>0.0728</td><td>1.059e+09</td><td>1.0402</td><td>19.0</td><td>1.037e-03</td><td>3.009e-03</td><td>7.779e+00</td><td>1.6979</td><td>18.9</td><td>1.871e-03</td><td>3.308e-03</td><td>2.656e+00</td><td>3.0761</td><td>20.3</td><td>1.211e-03</td><td>1.273e-03</td><td>2.103e+00</td></tr>
+<tr><td>P13</td><td>7.7349e-02</td><td>0.0728</td><td>1.053e+09</td><td>1.0402</td><td>19.0</td><td>1.037e-03</td><td>3.009e-03</td><td>7.779e+00</td><td>1.7011</td><td>18.9</td><td>1.876e-03</td><td>3.310e-03</td><td>2.644e+00</td><td>3.0916</td><td>20.4</td><td>1.212e-03</td><td>1.276e-03</td><td>2.077e+00</td></tr>
+<tr><td>P14</td><td>7.7222e-02</td><td>0.0728</td><td>1.041e+09</td><td>1.0426</td><td>19.0</td><td>1.040e-03</td><td>3.011e-03</td><td>7.740e+00</td><td>1.7013</td><td>18.9</td><td>1.876e-03</td><td>3.310e-03</td><td>2.644e+00</td><td>3.0907</td><td>20.4</td><td>1.215e-03</td><td>1.278e-03</td><td>2.074e+00</td></tr>
+<tr><td>P15</td><td>7.7110e-02</td><td>0.0728</td><td>1.030e+09</td><td>1.0427</td><td>19.0</td><td>1.040e-03</td><td>3.011e-03</td><td>7.739e+00</td><td>1.7047</td><td>18.9</td><td>1.881e-03</td><td>3.312e-03</td><td>2.632e+00</td><td>3.0897</td><td>20.4</td><td>1.217e-03</td><td>1.282e-03</td><td>2.070e+00</td></tr>
+<tr><td>P16</td><td>7.6987e-02</td><td>0.0728</td><td>1.027e+09</td><td>1.0451</td><td>19.0</td><td>1.043e-03</td><td>3.012e-03</td><td>7.700e+00</td><td>1.7049</td><td>18.9</td><td>1.881e-03</td><td>3.312e-03</td><td>2.631e+00</td><td>3.0888</td><td>20.4</td><td>1.220e-03</td><td>1.285e-03</td><td>2.067e+00</td></tr>
+
+        </tbody>
+    </table>
+</body>
+</html>
