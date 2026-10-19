@@ -1,4 +1,4 @@
-# Data-Driven Predictive Modelling of PMUT Arrays
+# Physics-Informed Predictive Modelling of PMUT Arrays
 
 This project processes frequency-response measurements for PMUT arrays and evaluates seven implemented models using progressive and regime-aware training:
 Random Forest (RF), Gradient Boosting (GB), MLP, PINN, MDOF-PINN,
