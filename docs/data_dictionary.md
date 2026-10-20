@@ -63,30 +63,32 @@ frequencies retain their stored floating-point values.
 
 Feature and target scaling are separate in the model code:
 
-- For the scikit-learn MLP models, `StandardScaler` is fitted to the training
-  feature matrix only and then used to transform the held-out target inputs.
-  Pointwise features are `N_PMUT` and `Frequency_MHz`; vector-model features
-  contain `N_PMUT` only. RF and GB feature inputs are not standardized.
-- The target is `Amplitude_R_mean`. `src/Helpers/data_loader.py` creates
-  `Amplitude_Scaled` by fitting one `StandardScaler` to the complete
-  amplitude column before any experiment-specific training PMUTs are
-  selected. The same scaler is then used to form training targets and to
-  inverse-transform predictions and reference values.
-- The PINN-family models train against amplitude in its original workbook
-  scale and do not use this target scaler.
+- For the scikit-learn MLP models, the feature `StandardScaler` is fitted to
+  the training feature matrix only and then used to transform held-out target
+  inputs. Pointwise features are `N_PMUT` and `Frequency_MHz`; vector-model
+  features contain `N_PMUT` only. RF and GB feature inputs are not
+  standardized.
+- For the scikit-learn RF, GB, and MLP models, the target is
+  `Amplitude_R_mean`. For each progressive or regime-aware experiment,
+  `scripts/01_train_cache.py` fits a separate target `StandardScaler` using
+  amplitudes from that experiment's training PMUTs only. It transforms the
+  amplitudes for that experiment; held-out target amplitudes are never used to
+  fit the scaler. Predictions and reference values are inverse-transformed
+  before metrics are calculated.
+- PINN, MDOF-PINN, and PINN-Informed-Loss train against amplitude in its
+  original workbook scale. The RF-MDOF-PINN hybrid reconstructs measured
+  amplitudes in the original scale before fitting its residual RF model.
 
-Therefore, target-scaling statistics are **not training-only**: the current
-pipeline uses all PMUTs, including held-out targets, to calculate the
-amplitude mean and standard deviation. Feature-scaling statistics for MLP
-inputs are fitted on training rows only. Metrics are returned on the original
-amplitude scale, but inverse-transforming them does not remove the target
-scaler's held-out-data leakage. Results should not be described as having
-training-only preprocessing statistics or as leakage-free.
+Thus feature-scaler statistics (where feature scaling is used) and target
+scaler statistics are fitted using training data only in the current
+`scripts/01_train_cache.py` pipeline. The previously supplied prediction
+caches and metric exports predate this correction; rerun the full training
+cache generation to create outputs using training-only target scaling.
 
 For each evaluated target curve, MAE and RMSE are arithmetic means over the
 evaluated recorded frequency samples, and R² uses the same unweighted samples.
-The FWHM ROI metrics use the unweighted samples inside the ROI. No metric
-integrates over frequency or weights residuals by adjacent frequency
+The FWHM ROI metrics likewise weight each included sample equally. Metrics do
+not integrate over frequency or weight residuals by adjacent frequency
 intervals. Because the grid is near-logarithmic, samples are much denser per
 MHz at the low-frequency end; accordingly, those regions receive more weight
 per unit bandwidth than the high-frequency end. Aggregated tables then take

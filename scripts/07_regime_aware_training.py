@@ -67,7 +67,7 @@ def main():
     from Helpers.pinn_model import fit_sdof_directly, fit_pinn, compute_sdof_amplitude
     from Helpers.bvd_model import fit_bvd_pmut
     from Helpers.mdof_model import fit_mdof_pmut
-    df_all, _, _, _, _ = load_data()
+    df_all, _ = load_data()
     full_pmuts = sorted(df_all["N_PMUT"].unique())
     pinn_global = fit_pinn(df_all, t_pmuts=full_pmuts, use_two_modes=False, epochs=150)
     

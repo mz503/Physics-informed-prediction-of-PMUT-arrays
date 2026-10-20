@@ -24,20 +24,36 @@
 
 Do not fill these gaps with values copied from narrative examples unless those
 values are verified against the exact run that generated the reported results.
-The target amplitude scaler currently fits against all PMUT spectra before a
-training split, which leaks held-out distribution information. Review this
-behavior before using the exported metrics as a final evaluation.
 
-Scaling and evaluation details: MLP input-feature scalers are fitted on the
-training feature matrices, but the shared target `StandardScaler` for
-`Amplitude_R_mean` is fitted in `load_data()` on all PMUTs before experiment
-splits. Thus preprocessing statistics are not wholly training-only, and
-held-out target amplitudes influence the target scaling statistics. Reported
-MAE, RMSE, and R² are computed on the original amplitude scale with equal
-weight per recorded frequency sample; they are not weighted or integrated by
-frequency interval. Since the grid is near-logarithmic, that gives more weight
-per unit bandwidth to the denser low-frequency region. Summary tables average
-per-target metrics arithmetically.
+Scaling and evaluation details: for scikit-learn MLPs, feature scaling is
+separate from target scaling. The feature `StandardScaler` is fitted on each
+training feature matrix only; RF and GB feature inputs are not standardized.
+For RF, GB, and MLP, the `Amplitude_R_mean` target `StandardScaler` is fitted
+separately for each progressive or regime-aware experiment, using only that
+experiment's training PMUTs. PINN-family models use amplitudes in their
+original scale; the RF-MDOF-PINN hybrid also fits its residual model on
+original-scale amplitudes. The resulting predictions and reference values are
+evaluated on the original amplitude scale.
+
+Reported MAE, RMSE, and R² weight recorded frequency samples equally. ROI
+metrics do the same over included ROI samples; none of these metrics weights
+samples by frequency spacing or integrates over frequency. As the grid is
+near-logarithmic, that gives more weight per unit bandwidth to the denser
+low-frequency region. Summary tables average per-target metrics
+arithmetically.
+
+The prediction caches and metric exports already present in the repository
+were generated before the training-only target-scaling correction. Rebuild
+the full prediction caches before treating those supplied results as outputs
+of the current pipeline. Selectively rerunning RF, GB, and MLP together can
+replace the stale scaled-model entries while retaining previously cached
+physics-model entries, which do not train against the scaled target. Other
+selective reruns are blocked when they would preserve stale RF, GB, or MLP
+entries.
+These statements apply to the maintained cache-generation scripts; the
+standalone [`FHWM.ipynb`](../supplementary/FHWM.ipynb) is a legacy workflow and
+should not be used to substantiate training-only scaling without a separate
+update.
 
 The supplied workbooks do contain three `All_Sweeps_Labeled` records per
 `N_PMUT`; their arithmetic means and sample standard deviations reproduce the

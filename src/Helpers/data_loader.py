@@ -4,7 +4,6 @@ Load and preprocess PMUT data from the unified CSV file.
 """
 
 import pandas as pd
-import numpy as np
 from sklearn.preprocessing import StandardScaler
 
 CSV_PATH = "data/processed/pmuts_all.csv"
@@ -12,30 +11,39 @@ CSV_PATH = "data/processed/pmuts_all.csv"
 
 def load_data(csv_path: str = CSV_PATH):
     """
-    Load the unified PMUT CSV, fit a StandardScaler on Amplitude_R_mean,
-    and build per-PMUT amplitude matrices for multi-output models.
+    Load the unified PMUT CSV and return the device identifiers.
 
     Returns
     -------
-    df_all        : DataFrame with N_PMUT, Frequency_MHz, Amplitude_R_mean, Amplitude_Scaled
-    amp_scaler    : fitted StandardScaler (use for inverse_transform)
+    df_all        : DataFrame with N_PMUT, Frequency_MHz, and Amplitude_R_mean
     unique_pmuts  : sorted list of PMUT IDs
-    y_mo          : ndarray (n_pmuts, n_freqs) — scaled amplitude per PMUT
-    X_mo          : ndarray (n_pmuts, 1)       — PMUT number as feature
     """
     df = pd.read_csv(csv_path)
     df = df.sort_values(["N_PMUT", "Frequency_MHz"]).reset_index(drop=True)
-
-    amp_scaler = StandardScaler()
-    df["Amplitude_Scaled"] = amp_scaler.fit_transform(df[["Amplitude_R_mean"]])
-
     unique_pmuts = sorted(df["N_PMUT"].unique())
 
-    y_mo = np.array([df[df["N_PMUT"] == p]["Amplitude_Scaled"].values
-                     for p in unique_pmuts])
-    X_mo = np.array(unique_pmuts).reshape(-1, 1)
+    return df, unique_pmuts
 
-    return df, amp_scaler, unique_pmuts, y_mo, X_mo
+
+def scale_target_for_training(df_all: pd.DataFrame, training_pmuts: list):
+    """Fit amplitude scaling on training PMUTs and transform all amplitudes."""
+    if not training_pmuts:
+        raise ValueError("training_pmuts must contain at least one PMUT")
+
+    training_mask = df_all["N_PMUT"].isin(training_pmuts)
+    found_pmuts = set(df_all.loc[training_mask, "N_PMUT"].unique())
+    missing_pmuts = set(training_pmuts) - found_pmuts
+    if missing_pmuts:
+        raise ValueError(f"Training PMUTs are missing from the data: {sorted(missing_pmuts)}")
+
+    amp_scaler = StandardScaler()
+    amp_scaler.fit(df_all.loc[training_mask, ["Amplitude_R_mean"]])
+
+    scaled_df = df_all.copy()
+    scaled_df["Amplitude_Scaled"] = amp_scaler.transform(
+        df_all[["Amplitude_R_mean"]]
+    ).ravel()
+    return scaled_df, amp_scaler
 
 
 def get_regimes():

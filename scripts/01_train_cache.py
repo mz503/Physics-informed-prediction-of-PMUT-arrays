@@ -33,7 +33,7 @@ if hasattr(sys.stdout, "reconfigure"):
 import numpy as np
 import pandas as pd
 
-from Helpers.data_loader import load_data
+from Helpers.data_loader import load_data, scale_target_for_training
 from Helpers.fwhm_utils  import compute_fwhm_window
 from Helpers.model_utils import train_predict_vector, train_predict_pointwise
 
@@ -42,10 +42,23 @@ import argparse
 DATA_DIR = os.path.join("results", "predictions")
 PROG_CSV = os.path.join(DATA_DIR, "progressive_cache.csv")
 REGI_CSV = os.path.join(DATA_DIR, "regime_cache.csv")
+CACHE_TARGET_SCALING = "training_pmuts_only_v1"
+TARGET_SCALED_MODELS = {"RF", "GB", "MLP"}
 
 APPROACHES = [("Vector", train_predict_vector), ("Pointwise", train_predict_pointwise)]
 ALL_MODELS = ["RF", "GB", "MLP", "PINN", "MDOF-PINN", "PINN-Informed-Loss", "RF-MDOF-PINN"]
 
+
+def _stale_scaled_models(cache_df: pd.DataFrame) -> set:
+    affected = cache_df[cache_df["model"].isin(TARGET_SCALED_MODELS)]
+    if affected.empty:
+        return set()
+    if "target_scaling" not in affected:
+        return set(affected["model"].unique())
+    stale = affected[
+        ~affected["target_scaling"].eq(CACHE_TARGET_SCALING)
+    ]
+    return set(stale["model"].unique())
 
 
 REGIMES = [
@@ -67,7 +80,7 @@ REGIMES = [
 ]
 
 
-def _predict_all(target, t_pmuts, fwhm_lo, fwhm_hi, df_all, amp_scaler,
+def _predict_all(target, t_pmuts, fwhm_lo, fwhm_hi, df_all,
                  models_to_run: list, extra: dict = None) -> list:
     """
     Train and predict for specified approach × model combinations.
@@ -79,12 +92,14 @@ def _predict_all(target, t_pmuts, fwhm_lo, fwhm_hi, df_all, amp_scaler,
         "n_train":      len(t_pmuts),
         "fwhm_lo":      round(float(fwhm_lo), 5),
         "fwhm_hi":      round(float(fwhm_hi), 5),
+        "target_scaling": CACHE_TARGET_SCALING,
         **(extra or {}),
     }
+    df_scaled, amp_scaler = scale_target_for_training(df_all, t_pmuts)
     rows = []
     for approach_name, train_fn in APPROACHES:
         for model in models_to_run:
-            fq, act, pr = train_fn(model, df_all, t_pmuts, target, amp_scaler)
+            fq, act, pr = train_fn(model, df_scaled, t_pmuts, target, amp_scaler)
             for f, a, p in zip(fq, act, pr):
                 rows.append({
                     **base,
@@ -112,7 +127,7 @@ def main():
         models_to_run = ALL_MODELS
 
     os.makedirs(DATA_DIR, exist_ok=True)
-    df_all, amp_scaler, unique_pmuts, _, _ = load_data()
+    df_all, unique_pmuts = load_data()
 
     # Load existing cache if running selectively
     existing_prog_df = pd.DataFrame()
@@ -120,9 +135,23 @@ def main():
     if models_to_run != ALL_MODELS:
         if os.path.exists(PROG_CSV):
             df_ex = pd.read_csv(PROG_CSV)
+            stale_models = _stale_scaled_models(df_ex)
+            if not stale_models.issubset(models_to_run):
+                raise RuntimeError(
+                    f"{PROG_CSV} has stale target-scaled models "
+                    f"{sorted(stale_models - set(models_to_run))}; include them in "
+                    "--models or rebuild the full cache."
+                )
             existing_prog_df = df_ex[~df_ex["model"].isin(models_to_run)]
         if os.path.exists(REGI_CSV):
             df_ex = pd.read_csv(REGI_CSV)
+            stale_models = _stale_scaled_models(df_ex)
+            if not stale_models.issubset(models_to_run):
+                raise RuntimeError(
+                    f"{REGI_CSV} has stale target-scaled models "
+                    f"{sorted(stale_models - set(models_to_run))}; include them in "
+                    "--models or rebuild the full cache."
+                )
             existing_regi_df = df_ex[~df_ex["model"].isin(models_to_run)]
 
     # ── Progressive (targets 2–16) ─────────────────────────────────────────────
@@ -133,7 +162,7 @@ def main():
         fwhm_lo, fwhm_hi = compute_fwhm_window(target, df_all)
         print(f"  PMUT {target:>2}  train={t_pmuts}")
         prog_rows.extend(
-            _predict_all(target, t_pmuts, fwhm_lo, fwhm_hi, df_all, amp_scaler, models_to_run))
+            _predict_all(target, t_pmuts, fwhm_lo, fwhm_hi, df_all, models_to_run))
 
     df_prog_new = pd.DataFrame(prog_rows)
     if not existing_prog_df.empty:
@@ -155,7 +184,7 @@ def main():
             fwhm_lo, fwhm_hi = compute_fwhm_window(target, df_all)
             print(f"  R{rid}  PMUT {target:>2} (within)  train={t_pmuts}")
             regi_rows.extend(
-                _predict_all(target, t_pmuts, fwhm_lo, fwhm_hi, df_all, amp_scaler,
+                _predict_all(target, t_pmuts, fwhm_lo, fwhm_hi, df_all,
                              models_to_run,
                              extra={"regime_id": rid, "regime_name": rname,
                                     "step_type": "within"}))
@@ -165,7 +194,7 @@ def main():
             fwhm_lo, fwhm_hi = compute_fwhm_window(target, df_all)
             print(f"  R{rid}  PMUT {target:>2} ★ cross  train={t_pmuts}")
             regi_rows.extend(
-                _predict_all(target, t_pmuts, fwhm_lo, fwhm_hi, df_all, amp_scaler,
+                _predict_all(target, t_pmuts, fwhm_lo, fwhm_hi, df_all,
                              models_to_run,
                              extra={"regime_id": rid, "regime_name": rname,
                                     "step_type": "cross"}))
