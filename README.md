@@ -72,6 +72,4 @@ present in this reorganized copy.
 
 ## Licensing and citation
 
-No code/data licence or citation metadata was present in the supplied project
-files. Add the applicable licence and bibliographic citation before
-redistribution or publication.
+If you use or build upon this work, please cite the associated publication(s) and this repository, including the release or commit used. Third-party materials remain subject to their original licences and attribution requirements.
